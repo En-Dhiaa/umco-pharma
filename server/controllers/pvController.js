@@ -55,7 +55,8 @@ const createReport = async (req, res) => {
       success: true,
       message_en: `Pharmacovigilance report submitted successfully. Reference: ${reportReference}. Our medical safety team will review it immediately.`,
       message_ar: `تم تسجيل بلاغ التيقظ الدوائي بنجاح. الرقم المرجعي: ${reportReference}. سيقوم الفريق الطبي بمراجعته فوراً.`,
-      reportReference
+      reportReference,
+      reference: reportReference
     });
   } catch (err) {
     console.error('createPVReport error:', err);

@@ -24,19 +24,24 @@ if (fs.existsSync(schemaPath)) {
 }
 
 // Database helper utilities
+const sanitizeParams = (params = []) => {
+  if (!Array.isArray(params)) return [];
+  return params.map(p => (p === undefined ? null : p));
+};
+
 const query = (sql, params = []) => {
   const stmt = db.prepare(sql);
-  return stmt.all(...params);
+  return stmt.all(...sanitizeParams(params));
 };
 
 const get = (sql, params = []) => {
   const stmt = db.prepare(sql);
-  return stmt.get(...params);
+  return stmt.get(...sanitizeParams(params));
 };
 
 const run = (sql, params = []) => {
   const stmt = db.prepare(sql);
-  return stmt.run(...params);
+  return stmt.run(...sanitizeParams(params));
 };
 
 const exec = (sql) => {

@@ -1671,3 +1671,117 @@ body[dir="ltr"] .toast-container {
     grid-template-columns: 1fr;
   }
 }
+
+/* =====================================================================
+   PRINTABLE PHARMACEUTICAL CATALOG STYLES & PRINT MEDIA
+===================================================================== */
+.printable-catalog-sheet {
+  background: #ffffff;
+  color: #1e293b;
+  font-family: inherit;
+  padding: 12px;
+}
+.catalog-print-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid var(--primary-crimson, #C8102E);
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+}
+.catalog-print-logo-area {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.catalog-print-meta {
+  text-align: right;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: #64748b;
+}
+[dir="ltr"] .catalog-print-meta {
+  text-align: left;
+}
+.catalog-print-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  font-size: 0.85rem;
+}
+.catalog-print-table th {
+  background: #0A1E3F;
+  color: #ffffff;
+  padding: 10px 8px;
+  text-align: start;
+  font-weight: 700;
+  border: 1px solid #0A1E3F;
+}
+.catalog-print-table td {
+  padding: 8px;
+  border: 1px solid #e2e8f0;
+  vertical-align: top;
+  line-height: 1.4;
+}
+.catalog-print-table tr:nth-child(even) {
+  background: #f8fafc;
+}
+.catalog-print-footer {
+  margin-top: 20px;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 12px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 10mm;
+  }
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 10pt;
+  }
+  .navbar,
+  .top-notice-bar,
+  .hero-section,
+  .manufacturing-section,
+  .branches-grid,
+  .site-footer,
+  .toast-container,
+  .modal-backdrop:not(#catalog-print-modal),
+  #catalog-print-modal .modal-header .btn-icon-only,
+  #catalog-print-modal .modal-footer,
+  .catalog-controls,
+  .no-print {
+    display: none !important;
+  }
+  #catalog-print-modal {
+    position: static !important;
+    background: transparent !important;
+    display: block !important;
+    padding: 0 !important;
+  }
+  #catalog-print-modal .modal-container {
+    max-width: 100% !important;
+    width: 100% !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+  .catalog-print-table th {
+    background: #0A1E3F !important;
+    color: #ffffff !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .catalog-print-table tr:nth-child(even) {
+    background: #f8fafc !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

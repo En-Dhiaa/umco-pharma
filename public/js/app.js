@@ -55,6 +55,7 @@ const I18N = {
     spec_active_ing: "المادة الفعالة:",
     spec_dosage: "الشكل الصيدلاني:",
     spec_size: "العبوة:",
+    btn_print_catalog: "طباعة / تصدير الكتالوج المعتمد (PDF)",
 
     // Manufacturing Section
     mfg_tag: "الكفاءة التصنيعية وضبط الجودة",
@@ -154,6 +155,7 @@ const I18N = {
     spec_active_ing: "Active Ingredient:",
     spec_dosage: "Dosage Form:",
     spec_size: "Packaging:",
+    btn_print_catalog: "Print / Export Official Catalog (PDF)",
 
     // Manufacturing Section
     mfg_tag: "Manufacturing Excellence & QC",
@@ -666,10 +668,14 @@ function renderProductsSection() {
                 oninput="handleSearch(this.value)" />
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             </div>
-            <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px;">
+            <div style="display: flex; align-items: center; justify-content: flex-end; gap: 12px; flex-wrap: wrap;">
               <span style="font-weight: 700; color: var(--text-secondary); font-size: 0.9rem;">
                 ${filteredProducts.length} ${isAr ? 'مستحضر متوفر' : 'Formulations'}
               </span>
+              <button class="btn btn-outline btn-sm" onclick="openPrintableCatalog()" style="gap: 6px;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                <span>${t('btn_print_catalog')}</span>
+              </button>
             </div>
           </div>
 
@@ -1662,6 +1668,13 @@ function renderModals() {
         <!-- Rendered Dynamically -->
       </div>
     </div>
+
+    <!-- Printable Catalog Modal -->
+    <div id="catalog-print-modal" class="modal-backdrop">
+      <div class="modal-container" style="max-width: 950px;" id="catalog-print-content">
+        <!-- Rendered Dynamically -->
+      </div>
+    </div>
   `;
 }
 
@@ -1954,6 +1967,107 @@ function openProductQuickView(prodId) {
   `;
 
   openModal('product-quick-modal');
+}
+
+// Printable Official Catalog Monograph Sheet
+function openPrintableCatalog() {
+  const isAr = State.lang === 'ar';
+  const container = document.getElementById('catalog-print-content');
+  if (!container) return;
+
+  const nowFormatted = new Date().toLocaleDateString(isAr ? 'ar-YE' : 'en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+
+  container.innerHTML = `
+    <div class="modal-header no-print">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <svg width="22" height="22" color="var(--primary-crimson)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        <h3 class="modal-title">${isAr ? 'الكتالوج الدوائي المعتمد - شركة أمكو للصناعات الدوائية' : 'UMCO Pharmaceuticals - Official Product Monograph Catalog'}</h3>
+      </div>
+      <button class="btn btn-icon-only" onclick="closeModal('catalog-print-modal')">✕</button>
+    </div>
+
+    <div class="modal-body printable-catalog-sheet">
+      <div class="catalog-print-header">
+        <div class="catalog-print-logo-area">
+          <div class="logo-badge" style="width: 44px; height: 44px; font-size: 1.2rem;">UM</div>
+          <div>
+            <div style="font-size: 1.25rem; font-weight: 800; color: #0A1E3F;">${isAr ? 'شركة أمكو للصناعات الدوائية والطبية' : 'UMCO Pharmaceuticals & Medical Industries Co.'}</div>
+            <div style="font-size: 0.8rem; color: #C8102E; font-weight: 700;">${isAr ? 'المقر الرئيسي: صنعاء، شارع حدة، مبنى 64 (+967 1 414035)' : 'HQ: Hadda St, Bldg 64, Sana\'a, Yemen (+967 1 414035)'}</div>
+          </div>
+        </div>
+        <div class="catalog-print-meta">
+          <div><strong>${isAr ? 'تاريخ التحديث:' : 'Date:'}</strong> ${nowFormatted}</div>
+          <div><strong>${isAr ? 'المعيار الصناعي:' : 'Standard:'}</strong> cGMP / ISO 9001:2015</div>
+          <div><strong>${isAr ? 'البريد الرسمي:' : 'Email:'}</strong> info@umcopharma.com</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 12px; font-size: 0.9rem; color: #334155;">
+        ${isAr ? 
+          'قائمة المستحضرات الصيدلانية والمعقمات الطبية المسجلة والمرخصة والمطابقة للدساتير الدوائية العالمية (USP / BP).' :
+          'Official schedule of licensed pharmaceutical formulations, surgical antiseptics and clinical topical preparations.'
+        }
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table class="catalog-print-table">
+          <thead>
+            <tr>
+              <th style="width: 12%;">${isAr ? 'كود المستحضر' : 'SKU'}</th>
+              <th style="width: 25%;">${isAr ? 'الاسم التجاري' : 'Trade Name'}</th>
+              <th style="width: 25%;">${isAr ? 'المادة الفعالة والتركيز' : 'Active Ingredient & Strength'}</th>
+              <th style="width: 18%;">${isAr ? 'الشكل والعبوة' : 'Dosage & Size'}</th>
+              <th style="width: 20%;">${isAr ? 'القسم العلاجي' : 'Category'}</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${State.products.map(p => `
+              <tr>
+                <td style="font-weight: 700; color: #0A1E3F;">${p.sku || '-'}</td>
+                <td>
+                  <strong style="color: #C8102E;">${isAr ? p.trade_name_ar : p.trade_name_en}</strong>
+                  <div style="font-size: 0.78rem; color: #64748b;">${isAr ? p.trade_name_en : p.trade_name_ar}</div>
+                </td>
+                <td>
+                  <strong>${p.scientific_name || '-'}</strong>
+                  ${p.concentration ? `<div style="font-size: 0.8rem; color: #475569;">${p.concentration}</div>` : ''}
+                </td>
+                <td>
+                  <span>${isAr ? p.dosage_form_ar : p.dosage_form_en}</span>
+                  ${p.package_size ? `<div style="font-size: 0.78rem; color: #64748b;">(${p.package_size})</div>` : ''}
+                </td>
+                <td>${isAr ? p.category_name_ar : p.category_name_en}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="catalog-print-footer">
+        <div>
+          <strong>${isAr ? 'المسؤول المخول للشراكات والتوريد:' : 'Authorized Commercial Representative:'}</strong> 
+          د. عبدالله إسحاق (+967 776 666 676)
+        </div>
+        <div>
+          ${isAr ? 'وثيقة رسمية صادرة آلياً عن منصة أمكو للعمليات الدوائية' : 'Official Document Generated via UMCO Pharma Platform'}
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer no-print">
+      <button type="button" class="btn btn-outline" onclick="closeModal('catalog-print-modal')">${isAr ? 'إغلاق' : 'Close'}</button>
+      <button type="button" class="btn btn-primary" onclick="window.print()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        <span>${isAr ? 'طباعة المستند / حفظ كـ PDF' : 'Print / Save as PDF'}</span>
+      </button>
+    </div>
+  `;
+
+  openModal('catalog-print-modal');
 }
 
 // RFQ Cart Helpers

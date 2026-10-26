@@ -113,6 +113,13 @@ const getTasks = async (req, res) => {
 const getTaskById = async (req, res) => {
   try {
     const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message_en: 'Task ID is required.',
+        message_ar: 'معرف المهمة مطلوب.'
+      });
+    }
 
     const task = get(`
       SELECT 
@@ -263,6 +270,14 @@ const updateTask = async (req, res) => {
   try {
     const user = req.user;
     const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message_en: 'Task ID is required.',
+        message_ar: 'معرف المهمة مطلوب.'
+      });
+    }
+
     const {
       status,
       progress_percent,
@@ -376,6 +391,14 @@ const addTaskComment = async (req, res) => {
   try {
     const user = req.user;
     const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message_en: 'Task ID is required.',
+        message_ar: 'معرف المهمة مطلوب.'
+      });
+    }
+
     const { comment } = req.body;
 
     if (!comment || !comment.trim()) {

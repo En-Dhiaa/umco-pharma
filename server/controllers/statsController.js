@@ -4,10 +4,10 @@ const getSystemStats = async (req, res) => {
   try {
     const productsCount = get('SELECT COUNT(*) as count FROM products WHERE is_active = 1');
     const branchesCount = get('SELECT COUNT(*) as count FROM branches WHERE is_active = 1');
-    const employeesCount = get('SELECT COUNT(*) as count FROM employees WHERE status = "active"');
+    const employeesCount = get("SELECT COUNT(*) as count FROM employees WHERE status = 'active'");
     const tasksTotal = get('SELECT COUNT(*) as count FROM tasks');
-    const tasksCompleted = get('SELECT COUNT(*) as count FROM tasks WHERE status = "completed"');
-    const tasksPending = get('SELECT COUNT(*) as count FROM tasks WHERE status IN ("todo", "in_progress", "in_review")');
+    const tasksCompleted = get("SELECT COUNT(*) as count FROM tasks WHERE status = 'completed'");
+    const tasksPending = get("SELECT COUNT(*) as count FROM tasks WHERE status IN ('todo', 'in_progress', 'in_review')");
     const quotesTotal = get('SELECT COUNT(*) as count FROM quote_requests');
     const pvReports = get('SELECT COUNT(*) as count FROM pharmacovigilance_reports');
 
