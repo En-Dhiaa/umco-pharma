@@ -66,7 +66,7 @@ const PORT = config.port;
 app.listen(PORT, () => {
   console.log(`
 ========================================================================
-  UMCO PHARMACEUTICALS ENTERPRISE PLATFORM (شركة أمكو للصناعات الدوائية)
+  YUMCO PHARMACEUTICALS ENTERPRISE PLATFORM (شركة يمكو للصناعات الدوائية)
 ========================================================================
   🚀 Server running at: http://localhost:${PORT}
   📡 API Base URL:      http://localhost:${PORT}/api
@@ -74,8 +74,9 @@ app.listen(PORT, () => {
   👥 HR & Operations:   http://localhost:${PORT}/#portal
 
   Demo Credentials:
-  - Super Admin:  admin@umcopharma.com  | admin123  (د. عبدالله إسحاق)
-  - HR Manager:   hr@umcopharma.com     | hr123     (أ. فاطمة الشامي)
+  - Marketing:    marketing@umcopharma.com | marketing123 (د. أسامة الحمادي)
+  - Super Admin:  admin@umcopharma.com     | admin123  (د. عبدالله إسحاق)
+  - HR Manager:   hr@umcopharma.com        | hr123     (أ. فاطمة الشامي)
   - Production:   tariq.saleh@umcopharma.com | emp123 (م. طارق صالح)
   - Quality QA:   samira.qahtan@umcopharma.com | emp123 (د. سميرة قحطان)
 ========================================================================

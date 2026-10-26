@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
     name_en TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
-    role TEXT NOT NULL CHECK(role IN ('super_admin', 'hr_manager', 'branch_manager', 'employee', 'medical_rep')),
+    role TEXT NOT NULL CHECK(role IN ('super_admin', 'hr_manager', 'branch_manager', 'employee', 'medical_rep', 'marketing')),
     phone TEXT,
     avatar_url TEXT,
     is_active INTEGER NOT NULL DEFAULT 1,
@@ -186,6 +186,41 @@ CREATE TABLE IF NOT EXISTS pharmacovigilance_reports (
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 11. Medical Announcements, Advertisements & Campaigns (Marketing Hub)
+CREATE TABLE IF NOT EXISTS announcements (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title_ar TEXT NOT NULL,
+    title_en TEXT NOT NULL,
+    content_ar TEXT NOT NULL,
+    content_en TEXT NOT NULL,
+    category TEXT NOT NULL DEFAULT 'campaign' CHECK(category IN ('campaign', 'launch', 'awareness', 'tender', 'news')),
+    badge_ar TEXT,
+    badge_en TEXT,
+    image_url TEXT,
+    link_url TEXT,
+    is_active INTEGER DEFAULT 1,
+    author_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 12. Interactive Customer & Doctor Inquiries (Marketing & Medical Team Support)
+CREATE TABLE IF NOT EXISTS customer_inquiries (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    inquiry_number TEXT UNIQUE NOT NULL,
+    client_name TEXT NOT NULL,
+    client_contact TEXT NOT NULL,
+    client_type TEXT NOT NULL DEFAULT 'pharmacist' CHECK(client_type IN ('doctor', 'pharmacist', 'patient', 'distributor', 'hospital')),
+    subject TEXT NOT NULL,
+    message TEXT NOT NULL,
+    product_id INTEGER REFERENCES products(id) ON DELETE SET NULL,
+    status TEXT NOT NULL DEFAULT 'new' CHECK(status IN ('new', 'replied', 'closed')),
+    reply_message TEXT,
+    replied_by_user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+    replied_at DATETIME,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Indices for Fast Queries
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
@@ -198,3 +233,6 @@ CREATE INDEX IF NOT EXISTS idx_tasks_due_date ON tasks(due_date);
 CREATE INDEX IF NOT EXISTS idx_notifications_recipient ON notifications(recipient_user_id, is_read);
 CREATE INDEX IF NOT EXISTS idx_products_category ON products(category_id);
 CREATE INDEX IF NOT EXISTS idx_products_slug ON products(slug);
+CREATE INDEX IF NOT EXISTS idx_announcements_cat ON announcements(category, is_active);
+CREATE INDEX IF NOT EXISTS idx_inquiries_status ON customer_inquiries(status);
+

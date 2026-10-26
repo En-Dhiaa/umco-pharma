@@ -234,8 +234,8 @@ const createEmployee = async (req, res) => {
       recipientId: newUserId,
       senderId: hrUserId,
       type: 'hr_notice',
-      titleAr: 'مرحباً بك في منصة أمكو للصناعات الدوائية',
-      titleEn: 'Welcome to UMCO Pharmaceuticals Platform',
+      titleAr: 'مرحباً بك في منصة يمكو للصناعات الدوائية',
+      titleEn: 'Welcome to YUMCO Pharmaceuticals Platform',
       messageAr: `تم إنشاء حسابك الوظيفي برقم كود (${employee_code}) بنجاح. يمكنك الآن استعراض مهامك وتحديث إنجازاتك اليومية.`,
       messageEn: `Your employee profile (${employee_code}) has been created successfully. You can now view assigned tasks and submit your progress.`,
       linkUrl: '/tasks'

@@ -11,7 +11,8 @@ module.exports = {
     HR_MANAGER: 'hr_manager',
     BRANCH_MANAGER: 'branch_manager',
     EMPLOYEE: 'employee',
-    MEDICAL_REP: 'medical_rep'
+    MEDICAL_REP: 'medical_rep',
+    MARKETING: 'marketing'
   },
   taskStatuses: {
     TODO: 'todo',

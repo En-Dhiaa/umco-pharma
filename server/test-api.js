@@ -208,8 +208,70 @@ const runTest = async () => {
   console.log('      - Total Quotes:', statsResult.data.stats.quotes);
   console.log('      - Total PV Reports:', statsResult.data.stats.pvReports);
 
+  // 12. Test Marketing Specialist Login
+  console.log('\n12. Testing Marketing Specialist Login...');
+  const { req: mktLoginReq, res: mktLoginRes, getResult: getMktLoginRes } = mockReqRes({
+    email: 'marketing@umcopharma.com',
+    password: 'marketing123'
+  });
+  await authController.login(mktLoginReq, mktLoginRes);
+  const mktLoginResult = getMktLoginRes();
+  assert(mktLoginResult.status === 200, 'Marketing login should return 200');
+  assert(mktLoginResult.data?.success === true, 'Marketing login should succeed');
+  assert(mktLoginResult.data?.user?.role === 'marketing', 'Marketing user should have marketing role');
+  console.log('   ✅ Marketing Login successful:', mktLoginResult.data.user.name_ar, `(${mktLoginResult.data.user.role})`);
+  const mktUser = mktLoginResult.data.user;
+
+  // 13. Test Marketing Creating an Announcement / Campaign
+  console.log('\n13. Testing Marketing Creating Campaign / Announcement...');
+  const announcementController = require('./controllers/announcementController');
+  const { req: annReq, res: annRes, getResult: getAnnRes } = mockReqRes({
+    title_ar: 'تدشين خط إنتاج معلقات السوائل المعقمة الحديث',
+    title_en: 'Inauguration of Advanced Sterile Oral Suspensions Production Facility',
+    content_ar: 'يسر شركة يمكو الإعلان عن تشغيل خط إنتاج مؤتمت حديث لإنتاج المعلقات الصيدلانية بمواصفات عالمية.',
+    content_en: 'YUMCO is proud to announce the commercial launch of its state-of-the-art sterile oral line.',
+    campaign_type: 'product_launch',
+    target_audience: 'الأطباء، أصحاب الصيدليات، والمشافي',
+    image_url: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=800'
+  }, {}, mktUser);
+  await announcementController.createAnnouncement(annReq, annRes);
+  const annResult = getAnnRes();
+  assert(annResult.status === 201, `Create announcement should return 201, got ${annResult.status}`);
+  assert(annResult.data?.announcement?.id, 'Announcement should have an ID');
+  console.log('   ✅ Marketing Campaign created successfully:', annResult.data.announcement.title_ar);
+
+  // 14. Test Submitting a Customer Inquiry (Live Widget)
+  console.log('\n14. Testing Submitting Customer Inquiry (Live Widget)...');
+  const inquiryController = require('./controllers/inquiryController');
+  const { req: inqReq, res: inqRes, getResult: getInqRes } = mockReqRes({
+    customer_name: 'د. خالد الهتار - صيدلاني استشاري',
+    customer_role: 'pharmacist',
+    phone: '+967 772 345 678',
+    email: 'khaled.alhattar@pharma-yemen.com',
+    category: 'availability',
+    message: 'نود الاستفسار عن توفر كميات تجارية من مرهم يمكو كورت-إن وغسول يمكو سكراب لمستشفانا في إب.'
+  });
+  await inquiryController.createInquiry(inqReq, inqRes);
+  const inqResult = getInqRes();
+  assert(inqResult.status === 201, `Create inquiry should return 201, got ${inqResult.status}`);
+  assert(inqResult.data?.inquiryId, 'Inquiry creation should return inquiryId');
+  const createdInquiryId = inqResult.data.inquiryId;
+  console.log('   ✅ Customer Inquiry submitted successfully: ID', createdInquiryId);
+
+  // 15. Test Marketing Replying to the Inquiry
+  console.log('\n15. Testing Marketing Replying to Customer Inquiry...');
+  const { req: replyReq, res: replyRes, getResult: getReplyRes } = mockReqRes({
+    reply_ar: 'أهلاً بك د. خالد. تم تأكيد توفر الكميات لدى فرع يمكو بإب (شارع العدين)، وسيقوم مندوبنا بزيارتكم اليوم.',
+    reply_en: 'Dear Dr. Khaled, stock is available at YUMCO Ibb Branch, our representative will contact you today.'
+  }, {}, mktUser, { id: createdInquiryId });
+  await inquiryController.replyInquiry(replyReq, replyRes);
+  const replyResult = getReplyRes();
+  assert(replyResult.status === 200, `Reply inquiry should return 200, got ${replyResult.status}`);
+  assert(replyResult.data?.inquiry?.status === 'replied', 'Inquiry status should be replied');
+  console.log('   ✅ Marketing replied to inquiry successfully. Status:', replyResult.data.inquiry.status);
+
   console.log('\n======================================================');
-  console.log('🎉 ALL 11 WORKFLOW TESTS EXECUTED & PASSED WITH 100% SUCCESS!');
+  console.log('🎉 ALL 15 ENTERPRISE & MARKETING WORKFLOW TESTS PASSED 100%!');
   console.log('======================================================\n');
 };
 

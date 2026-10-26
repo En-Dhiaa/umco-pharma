@@ -8,19 +8,22 @@
 const I18N = {
   ar: {
     // Header & Brand
-    brand_name: "أمكو للصناعات الدوائية",
-    brand_sub: "شركة أمكو للصناعات الطبية والدوائية",
+    brand_name: "يمكو للصناعات الدوائية",
+    brand_sub: "شركة يمكو للصناعات الطبية والدوائية",
     nav_home: "الرئيسية",
-    nav_about: "من نحن",
-    nav_manufacturing: "التصنيع والجودة",
+    nav_campaigns: "الحملات والأخبار",
     nav_products: "المنتجات",
+    nav_clinical: "الدليل الدوائي والجرعات",
+    nav_manufacturing: "التصنيع والجودة",
     nav_branches: "شبكة الفروع",
     nav_rfq: "طلب عرض سعر",
     nav_pv: "التيقظ الدوائي",
+    nav_about: "من نحن",
     nav_portal: "بوابة الموظفين والعمليات",
     btn_login: "تسجيل الدخول",
     btn_logout: "تسجيل الخروج",
     btn_my_tasks: "مهامي والعمليات",
+    btn_ask_pharmacist: "اسأل الصيدلي / الدعم الطبي",
 
     // Top Bar
     top_contact_sana: "صنعاء: شارع حدة، مبنى 64 (+967 1 414035)",
@@ -43,10 +46,15 @@ const I18N = {
     metric_products: "+50 مستحضر",
     metric_products_sub: "مرخصة ومطابقة لدساتير BP/USP",
 
+    // Announcements Section
+    campaigns_tag: "الإعلام الطبي والحملات الدوائية",
+    campaigns_title: "أحدث الأخبار والحملات التوعوية والتدشينات الدوائية",
+    campaigns_desc: "مبادرات مستمرة من فريق التسويق والشؤون الطبية لتعزيز ثقافة التعقيم ودعم المنظومة الصحية الوطنية.",
+
     // Catalog Section
     catalog_tag: "الكتالوج الطبي المتكامل",
     catalog_title: "المستحضرات الدوائية والمستلزمات الطبية",
-    catalog_desc: "استعرض كافة مستحضرات شركة أمكو مع التركيبات العلمية ودواعي الاستعمال الموثقة",
+    catalog_desc: "استعرض كافة مستحضرات شركة يمكو مع التركيبات العلمية ودواعي الاستعمال الموثقة",
     search_placeholder: "ابحث بالاسم التجاري، المادة الفعالة، أو الاستخدام الطبي...",
     filter_all: "كافة المنتجات",
     btn_quick_view: "تفاصيل المستحضر",
@@ -56,6 +64,11 @@ const I18N = {
     spec_dosage: "الشكل الصيدلاني:",
     spec_size: "العبوة:",
     btn_print_catalog: "طباعة / تصدير الكتالوج المعتمد (PDF)",
+
+    // Clinical Guide Section
+    clinical_tag: "مرجع الأطباء والصيادلة",
+    clinical_title: "الدليل الدوائي السريع ومساعد الجرعات السريرية",
+    clinical_desc: "استرشاد سريع بالتركيزات ودواعي الاستعمال المعتمدة وفق مراجع الفارماكوبيا العالمية.",
 
     // Manufacturing Section
     mfg_tag: "الكفاءة التصنيعية وضبط الجودة",
@@ -71,7 +84,7 @@ const I18N = {
 
     // Branches Section
     branches_tag: "حضور ميداني في كافة المحافظات",
-    branches_title: "شبكة فروع أمكو المعتمدة في الجمهورية اليمنية",
+    branches_title: "شبكة فروع يمكو المعتمدة في الجمهورية اليمنية",
     branches_desc: "9 مراكز توزيع ومكاتب إقليمية لضمان سرعة إمداد المشافي والصيدليات بالاحتياجات الدوائية.",
     branch_hq: "المقر الرئيسي للإدارة",
     btn_contact_branch: "اتصال مباشر",
@@ -84,14 +97,19 @@ const I18N = {
     pv_title: "بوابة التيقظ الدوائي (Pharmacovigilance Hub)",
     pv_desc: "الإبلاغ المباشر عن أي ملاحظات جودة أو أعراض جانبية لضمان سلامة المرضى.",
 
-    // Portal & HR / Tasks
+    // Portal & HR / Tasks / Marketing
     portal_title: "بوابة العمليات وإدارة الموارد والمهام",
     tab_tasks: "لوحة مهام الموظفين (Tasks)",
     tab_employees: "سجل الموظفين وإدارة HR",
+    tab_inquiries: "استفسارات العملاء والأطباء",
+    tab_campaigns: "إدارة الحملات والإعلانات",
+    tab_products_mgmt: "إدارة ونشر الأدوية",
     tab_rfq_review: "طلبات عروض الأسعار",
     tab_pv_review: "بلاغات التيقظ الدوائي",
     btn_add_employee: "إضافة موظف جديد (HR)",
     btn_create_task: "إنشاء مهمة جديدة",
+    btn_add_announcement: "نشر إعلان / حملة جديدة",
+    btn_add_product: "إضافة دواء / مستحضر جديد",
     task_status_todo: "قيد الانتظار",
     task_status_in_progress: "قيد التنفيذ",
     task_status_in_review: "قيد المراجعة",
@@ -108,19 +126,22 @@ const I18N = {
   },
   en: {
     // Header & Brand
-    brand_name: "UMCO Pharmaceuticals",
-    brand_sub: "UMCO Medical & Pharma Industries Co.",
+    brand_name: "YUMCO Pharmaceuticals",
+    brand_sub: "YUMCO Medical & Pharma Industries Co.",
     nav_home: "Home",
-    nav_about: "About Us",
-    nav_manufacturing: "Manufacturing & QA",
+    nav_campaigns: "Campaigns & News",
     nav_products: "Products",
+    nav_clinical: "Clinical Guide",
+    nav_manufacturing: "Manufacturing & QA",
     nav_branches: "Branches Network",
     nav_rfq: "Request a Quote",
     nav_pv: "Pharmacovigilance",
+    nav_about: "About Us",
     nav_portal: "Operations Portal",
     btn_login: "Login",
     btn_logout: "Logout",
     btn_my_tasks: "My Tasks & Ops",
+    btn_ask_pharmacist: "Ask Pharmacist / Inquiries",
 
     // Top Bar
     top_contact_sana: "Sana'a: Hadda St, Bldg 64 (+967 1 414035)",
@@ -143,10 +164,15 @@ const I18N = {
     metric_products: "+50 Formulations",
     metric_products_sub: "USP/BP Pharmacopeia Compliant",
 
+    // Announcements Section
+    campaigns_tag: "Medical Communications & Announcements",
+    campaigns_title: "Latest Healthcare Campaigns, Product Launches & Bulletins",
+    campaigns_desc: "Continuous clinical initiatives by YUMCO marketing and medical affairs to empower patient wellness.",
+
     // Catalog Section
     catalog_tag: "Comprehensive Medical Catalog",
     catalog_title: "Pharmaceuticals & Medical Appliances",
-    catalog_desc: "Browse certified UMCO formulations with validated active ingredients and clinical monographs.",
+    catalog_desc: "Browse certified YUMCO formulations with validated active ingredients and clinical monographs.",
     search_placeholder: "Search by trade name, active ingredient, or indication...",
     filter_all: "All Products",
     btn_quick_view: "Product Specs",
@@ -156,6 +182,11 @@ const I18N = {
     spec_dosage: "Dosage Form:",
     spec_size: "Packaging:",
     btn_print_catalog: "Print / Export Official Catalog (PDF)",
+
+    // Clinical Guide Section
+    clinical_tag: "Clinical Reference Guide",
+    clinical_title: "Dosage Reference & Indications Index",
+    clinical_desc: "Quick clinical reference for physicians and pharmacists based on BP and USP standards.",
 
     // Manufacturing Section
     mfg_tag: "Manufacturing Excellence & QC",
@@ -171,7 +202,7 @@ const I18N = {
 
     // Branches Section
     branches_tag: "Nationwide Coverage",
-    branches_title: "Official UMCO Branches Across Yemen",
+    branches_title: "Official YUMCO Branches Across Yemen",
     branches_desc: "9 certified distribution centers ensuring immediate supply fulfillment to hospitals and pharmacies.",
     branch_hq: "General Headquarters",
     btn_contact_branch: "Direct Call",
@@ -184,14 +215,19 @@ const I18N = {
     pv_title: "Pharmacovigilance Reporting Hub",
     pv_desc: "Report adverse drug events or quality inquiries to our medical safety committee.",
 
-    // Portal & HR / Tasks
+    // Portal & HR / Tasks / Marketing
     portal_title: "Enterprise Operations & Employee Task System",
     tab_tasks: "Employee Tasks & Kanban",
     tab_employees: "HR Personnel Directory",
+    tab_inquiries: "Doctor & Client Inquiries",
+    tab_campaigns: "Marketing & Campaigns",
+    tab_products_mgmt: "Formulations Management",
     tab_rfq_review: "RFQ Quotations",
     tab_pv_review: "Drug Safety Reports",
     btn_add_employee: "Add New Employee (HR)",
     btn_create_task: "Assign New Task",
+    btn_add_announcement: "Publish New Campaign",
+    btn_add_product: "Add New Formulation",
     task_status_todo: "Pending",
     task_status_in_progress: "In Progress",
     task_status_in_review: "In Review",
@@ -208,13 +244,23 @@ const I18N = {
   }
 };
 
-// --- 2. Global State ---
+// --- 2. Global State & Language Auto-Detection ---
+function detectInitialLanguage() {
+  const saved = localStorage.getItem('umco_lang');
+  if (saved === 'ar' || saved === 'en') return saved;
+  // Detect browser/regional language
+  const browserLang = (navigator.languages && navigator.languages.length > 0)
+    ? navigator.languages[0]
+    : (navigator.language || navigator.userLanguage || 'ar');
+  return browserLang.toLowerCase().startsWith('ar') ? 'ar' : 'en';
+}
+
 const State = {
-  lang: localStorage.getItem('umco_lang') || 'ar',
+  lang: detectInitialLanguage(),
   token: localStorage.getItem('umco_token') || null,
   user: null,
   view: 'public', // 'public' or 'portal'
-  portalTab: 'tasks', // 'tasks', 'employees', 'quotes', 'pv'
+  portalTab: 'tasks', // 'tasks', 'employees', 'quotes', 'pv', 'inquiries', 'campaigns', 'products_mgmt'
   
   products: [],
   categories: [],
@@ -224,11 +270,15 @@ const State = {
   notifications: [],
   quotes: [],
   pvReports: [],
+  announcements: [],
+  inquiries: [],
   
   selectedCategory: 'all',
+  selectedClinicalCategory: 'all',
   searchQuery: '',
   rfqCart: [],
-  activeMfgTab: 1
+  activeMfgTab: 1,
+  inquiryWidgetOpen: false
 };
 
 // --- 3. API Client Wrapper ---
@@ -251,6 +301,17 @@ const API = {
     return await res.json();
   },
 
+  async put(endpoint, data = {}, auth = false) {
+    const headers = { 'Content-Type': 'application/json' };
+    if (auth && State.token) headers['Authorization'] = `Bearer ${State.token}`;
+    const res = await fetch(`/api${endpoint}`, {
+      method: 'PUT',
+      headers,
+      body: JSON.stringify(data)
+    });
+    return await res.json();
+  },
+
   async patch(endpoint, data = {}, auth = false) {
     const headers = { 'Content-Type': 'application/json' };
     if (auth && State.token) headers['Authorization'] = `Bearer ${State.token}`;
@@ -258,6 +319,16 @@ const API = {
       method: 'PATCH',
       headers,
       body: JSON.stringify(data)
+    });
+    return await res.json();
+  },
+
+  async delete(endpoint, auth = false) {
+    const headers = { 'Content-Type': 'application/json' };
+    if (auth && State.token) headers['Authorization'] = `Bearer ${State.token}`;
+    const res = await fetch(`/api${endpoint}`, {
+      method: 'DELETE',
+      headers
     });
     return await res.json();
   }
@@ -283,6 +354,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Load public baseline data
   await loadCatalogData();
+  await loadAnnouncementsData();
   await loadBranchesData();
   
   renderApp();
@@ -321,6 +393,15 @@ async function loadCatalogData() {
   }
 }
 
+async function loadAnnouncementsData() {
+  try {
+    const res = await API.get('/announcements');
+    if (res.success) State.announcements = res.announcements;
+  } catch (err) {
+    console.error('Error loading announcements:', err);
+  }
+}
+
 async function loadBranchesData() {
   try {
     const res = await API.get('/branches');
@@ -338,18 +419,45 @@ async function loadPortalData() {
       API.get('/notifications', true)
     ];
 
-    if (State.user.role === 'super_admin' || State.user.role === 'hr_manager') {
+    const role = State.user.role;
+    if (role === 'super_admin' || role === 'hr_manager') {
       promises.push(API.get('/employees', true));
       promises.push(API.get('/quotes', true));
       promises.push(API.get('/pv', true));
     }
 
+    if (role === 'super_admin' || role === 'marketing') {
+      promises.push(API.get('/inquiries', true));
+      promises.push(API.get('/announcements', true));
+      if (role === 'marketing') {
+        promises.push(API.get('/quotes', true));
+      }
+    }
+
     const results = await Promise.all(promises);
-    if (results[0].success) State.tasks = results[0].tasks;
-    if (results[1].success) State.notifications = results[1].notifications;
-    if (results[2] && results[2].success) State.employees = results[2].employees;
-    if (results[3] && results[3].success) State.quotes = results[3].quotes;
-    if (results[4] && results[4].success) State.pvReports = results[4].reports;
+    if (results[0] && results[0].success) State.tasks = results[0].tasks;
+    if (results[1] && results[1].success) State.notifications = results[1].notifications;
+
+    let idx = 2;
+    if (role === 'super_admin' || role === 'hr_manager') {
+      if (results[idx] && results[idx].success) State.employees = results[idx].employees;
+      idx++;
+      if (results[idx] && results[idx].success) State.quotes = results[idx].quotes;
+      idx++;
+      if (results[idx] && results[idx].success) State.pvReports = results[idx].reports;
+      idx++;
+    }
+
+    if (role === 'super_admin' || role === 'marketing') {
+      if (results[idx] && results[idx].success) State.inquiries = results[idx].inquiries;
+      idx++;
+      if (results[idx] && results[idx].success) State.announcements = results[idx].announcements;
+      idx++;
+      if (role === 'marketing') {
+        if (results[idx] && results[idx].success) State.quotes = results[idx].quotes;
+        idx++;
+      }
+    }
   } catch (err) {
     console.error('Error loading portal data:', err);
   }
@@ -455,16 +563,18 @@ function renderNavbar() {
     <nav class="navbar">
       <div class="container navbar-container">
         <div class="brand-logo" onclick="switchView('public')">
-          <div class="logo-badge">UM</div>
+          <div class="logo-badge">YM</div>
           <div class="brand-text">
-            <span class="brand-name">${isAr ? 'أمكو للصناعات الدوائية' : 'UMCO PHARMA'}</span>
+            <span class="brand-name">${isAr ? 'يمكو للصناعات الدوائية' : 'YUMCO PHARMA'}</span>
             <span class="brand-sub">${isAr ? 'جودة دوائية تفوق التوقعات' : 'Pharmaceutical Excellence'}</span>
           </div>
         </div>
 
         <ul class="nav-links">
           <li><a href="#hero" class="nav-link ${State.view === 'public' ? 'active' : ''}" onclick="switchView('public')">${t('nav_home')}</a></li>
+          <li><a href="#campaigns" class="nav-link" onclick="switchView('public')">${t('nav_campaigns')}</a></li>
           <li><a href="#products" class="nav-link" onclick="switchView('public')">${t('nav_products')}</a></li>
+          <li><a href="#clinical" class="nav-link" onclick="switchView('public')">${t('nav_clinical')}</a></li>
           <li><a href="#manufacturing" class="nav-link" onclick="switchView('public')">${t('nav_manufacturing')}</a></li>
           <li><a href="#branches" class="nav-link" onclick="switchView('public')">${t('nav_branches')}</a></li>
           <li><a href="#rfq" class="nav-link" onclick="switchView('public')">${t('nav_rfq')}</a></li>
@@ -547,12 +657,240 @@ function renderNotificationDropdown() {
 function renderPublicView() {
   return `
     ${renderHeroSection()}
+    ${renderAnnouncementsSection()}
     ${renderProductsSection()}
+    ${renderClinicalGuideSection()}
     ${renderManufacturingSection()}
+    ${renderContractMfgSection()}
     ${renderB2BSection()}
     ${renderBranchesSection()}
     ${renderPVSection()}
     ${renderAboutSection()}
+    ${renderFloatingInquiryWidget()}
+  `;
+}
+
+// Announcements & Medical Campaigns Showcase
+function renderAnnouncementsSection() {
+  const isAr = State.lang === 'ar';
+  const announcements = State.announcements || [];
+  if (announcements.length === 0) return '';
+
+  return `
+    <section id="campaigns" class="section" style="background: var(--bg-card-subtle);">
+      <div class="container">
+        <div class="section-title-wrap">
+          <span class="section-tag" style="background: rgba(200, 16, 46, 0.1); color: var(--umco-red);">${t('campaigns_tag')}</span>
+          <h2 class="section-title">${t('campaigns_title')}</h2>
+          <p class="section-desc">${t('campaigns_desc')}</p>
+        </div>
+
+        <div class="announcements-grid">
+          ${announcements.map(a => `
+            <div class="announcement-card">
+              <div class="announcement-img-wrap">
+                <img src="${a.image_url || 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800'}" alt="${a.title_en}" class="announcement-img" />
+                <span class="announcement-badge">${isAr ? (a.target_audience || 'المجتمع الطبي') : (a.target_audience || 'Medical Community')}</span>
+              </div>
+              <div class="announcement-body">
+                <span style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 6px;">📅 ${new Date(a.created_at).toLocaleDateString(isAr ? 'ar-YE' : 'en-US')}</span>
+                <h3 class="announcement-title">${isAr ? a.title_ar : a.title_en}</h3>
+                <p class="announcement-content">${isAr ? a.content_ar : a.content_en}</p>
+                <div style="margin-top: auto;">
+                  <button class="btn btn-outline btn-sm" style="width: 100%;" onclick="toggleInquiryWidget()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    <span>${isAr ? 'استفسار عن الحملة / طلب عينات' : 'Inquire / Request Samples'}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+// Healthcare Professionals (HCP) Clinical Dosage Guide
+function renderClinicalGuideSection() {
+  const isAr = State.lang === 'ar';
+  const products = State.products || [];
+
+  return `
+    <section id="clinical" class="section">
+      <div class="container">
+        <div class="section-title-wrap">
+          <span class="section-tag">${t('clinical_tag')}</span>
+          <h2 class="section-title">${t('clinical_title')}</h2>
+          <p class="section-desc">${t('clinical_desc')}</p>
+        </div>
+
+        <div class="clinical-table-wrap">
+          <table class="clinical-table">
+            <thead>
+              <tr>
+                <th style="width: 22%;">${isAr ? 'المستحضر والمادة الفعالة' : 'Product & Active API'}</th>
+                <th style="width: 15%;">${isAr ? 'الشكل والتركيز' : 'Dosage & Strength'}</th>
+                <th style="width: 35%;">${isAr ? 'دواعي الاستعمال السريرية' : 'Approved Indications'}</th>
+                <th style="width: 18%;">${isAr ? 'طريقة الاستخدام المقررة' : 'Clinical Administration'}</th>
+                <th style="width: 10%; text-align: center;">${isAr ? 'إجراء' : 'Action'}</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${products.slice(0, 7).map(p => `
+                <tr>
+                  <td>
+                    <strong style="color: var(--primary-navy);">${isAr ? p.trade_name_ar : p.trade_name_en}</strong>
+                    <div style="font-size: 0.8rem; color: var(--text-muted);">${p.scientific_name || ''}</div>
+                  </td>
+                  <td>
+                    <span class="spec-chip">${isAr ? p.dosage_form_ar : p.dosage_form_en}</span>
+                    <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">${p.concentration || ''}</div>
+                  </td>
+                  <td style="color: var(--text-secondary); line-height: 1.5;">${isAr ? p.indications_ar : p.indications_en}</td>
+                  <td style="font-size: 0.85rem; color: var(--text-secondary);">${isAr ? (p.usage_instructions_ar || 'حسب استشارة الطبيب المشرف.') : (p.usage_instructions_en || 'As directed by physician.')}</td>
+                  <td style="text-align: center;">
+                    <button class="btn btn-outline btn-sm" onclick="openProductQuickView(${p.id})" title="${t('btn_quick_view')}">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    </button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+// Contract & Toll Manufacturing Section (Global Pharma Standard)
+function renderContractMfgSection() {
+  const isAr = State.lang === 'ar';
+  return `
+    <section id="contract-mfg" class="section" style="background: #F8FAFC; border-top: 1px solid var(--border-color);">
+      <div class="container">
+        <div class="section-title-wrap">
+          <span class="section-tag" style="background: rgba(14, 165, 233, 0.1); color: var(--accent-blue);">${isAr ? 'شراكات التصنيع للغير (B2B)' : 'Contract & Toll Manufacturing'}</span>
+          <h2 class="section-title">${isAr ? 'حلول التصنيع الدوائي التعاقدي للشركات المحلية والدولية' : 'Contract Formulation & Sterile Toll Manufacturing'}</h2>
+          <p class="section-desc">
+            ${isAr ? 
+              'نوفر لشركائنا بنية تحتية تصنيعية حديثة، غرف نظيفة معتمدة، وأنظمة رقابة متقدمة لإنتاج وتعبئة المستحضرات الصيدلانية تحت علاماتهم التجارية الخاصة.' :
+              'We offer global and regional pharmaceutical partners state-of-the-art cleanroom manufacturing, automated packaging, and analytical release under private label agreements.'
+            }
+          </p>
+        </div>
+
+        <div class="contract-mfg-grid">
+          <div class="contract-mfg-card">
+            <div class="contract-mfg-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+            <h4 class="contract-mfg-title">${isAr ? 'صياغة وتطوير التراكيب' : 'Formulation & R&D'}</h4>
+            <p class="contract-mfg-desc">${isAr ? 'تطوير ودراسة ثبات المستحضرات الصيدلانية ومطابقتها لدساتير BP و USP مع إعداد ملفات CTD.' : 'Full formulation stability testing and CTD regulatory dossier preparation.'}</p>
+          </div>
+
+          <div class="contract-mfg-card">
+            <div class="contract-mfg-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <h4 class="contract-mfg-title">${isAr ? 'تعبئة معقمة فائقة النقاء' : 'Aseptic Filling'}</h4>
+            <p class="contract-mfg-desc">${isAr ? 'غرف نظيفة Class A/B معقمة بنظام فلاتر HEPA وتعبئة آلية لمنع أي مخاطر للتلوث الميكروبي.' : 'Class A/B cleanrooms with computerized particulate monitoring and HEPA filtration.'}</p>
+          </div>
+
+          <div class="contract-mfg-card">
+            <div class="contract-mfg-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+            </div>
+            <h4 class="contract-mfg-title">${isAr ? 'الرقابة النوعية والتحليل HPLC' : 'QC & Analytical Testing'}</h4>
+            <p class="contract-mfg-desc">${isAr ? 'تحاليل كيميائية وفيزيائية وجرثومية متقدمة لكل تشغيلة قبل الإفراج الرسمي عنها.' : 'High-performance liquid chromatography (HPLC) and microbial assays for every batch.'}</p>
+          </div>
+
+          <div class="contract-mfg-card">
+            <div class="contract-mfg-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+            </div>
+            <h4 class="contract-mfg-title">${isAr ? 'التغليف والتوزيع الإقليمي' : 'Packaging & Logistics'}</h4>
+            <p class="contract-mfg-desc">${isAr ? 'تغليف آلي بنظام التتبع الباركودي وسلاسل توريد مبردة تغطي مختلف المحافظات.' : 'Serialized barcoded automated secondary packaging and cold-chain dispatch.'}</p>
+          </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 32px;">
+          <a href="#rfq" class="btn btn-primary btn-lg">
+            <span>${isAr ? 'طلب مناقشة شراكة تصنيع تعاقدي' : 'Request Contract Manufacturing Proposal'}</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+// Floating "Ask Pharmacist / Medical Support" Widget
+function renderFloatingInquiryWidget() {
+  const isAr = State.lang === 'ar';
+  const isOpen = State.inquiryWidgetOpen;
+
+  return `
+    <!-- Floating Trigger Button -->
+    <button class="floating-inquiry-trigger" onclick="toggleInquiryWidget()" title="${t('btn_ask_pharmacist')}">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span>${isAr ? 'اسأل الصيدلي / الاستفسار الطبي' : 'Ask Pharmacist / Medical Support'}</span>
+    </button>
+
+    <!-- Floating Dialog Panel -->
+    <div class="floating-inquiry-panel ${isOpen ? 'open' : ''}" id="floating-inquiry-panel">
+      <div class="inquiry-panel-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <svg width="18" height="18" color="#38BDF8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span style="font-weight: 800; font-size: 0.95rem;">${isAr ? 'استفسار صيدلاني وطبي مباشر' : 'Medical & Clinical Inquiries'}</span>
+        </div>
+        <button class="btn btn-icon-only" style="color: #fff; background: transparent; padding: 0;" onclick="toggleInquiryWidget()">✕</button>
+      </div>
+
+      <div class="inquiry-panel-body">
+        <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.4;">
+          ${isAr ? 'يتولى فريق التسويق والشؤون الطبية بشركة يمكو الرد المباشر على استفسارات الأطباء والصيادلة والمرضى.' : 'YUMCO Medical & Marketing team responds promptly to your clinical and availability questions.'}
+        </p>
+
+        <form onsubmit="submitInquiry(event)">
+          <div class="form-group" style="margin-bottom: 10px;">
+            <input type="text" name="customer_name" required class="form-control" style="font-size: 0.85rem; padding: 8px 12px;" placeholder="${isAr ? 'الاسم الكريم *' : 'Your Name *'}" />
+          </div>
+
+          <div class="form-group" style="margin-bottom: 10px;">
+            <select name="customer_role" class="form-control" style="font-size: 0.85rem; padding: 8px 12px;">
+              <option value="physician">${isAr ? 'طبيب بشري' : 'Physician'}</option>
+              <option value="pharmacist" selected>${isAr ? 'صيدلاني / صيدلانية' : 'Pharmacist'}</option>
+              <option value="hospital_buyer">${isAr ? 'مسؤول مشتريات مشافي' : 'Hospital Procurement'}</option>
+              <option value="patient">${isAr ? 'مريض / مستهلك' : 'Patient'}</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 10px;">
+            <input type="tel" name="phone" required class="form-control" style="font-size: 0.85rem; padding: 8px 12px;" placeholder="${isAr ? 'رقم الهاتف / الواتساب *' : 'Phone / WhatsApp *'}" />
+          </div>
+
+          <div class="form-group" style="margin-bottom: 10px;">
+            <select name="category" class="form-control" style="font-size: 0.85rem; padding: 8px 12px;">
+              <option value="availability">${isAr ? 'توفر الأصناف والأسعار' : 'Drug Availability & Pricing'}</option>
+              <option value="dosage">${isAr ? 'الجرعات والاستخدام السريري' : 'Clinical Dosage & Indications'}</option>
+              <option value="interactions">${isAr ? 'التداخلات الدوائية والآثار' : 'Drug Interactions'}</option>
+              <option value="samples">${isAr ? 'طلب عينات لمستشفى أو عيادة' : 'Medical Samples Request'}</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 12px;">
+            <textarea name="message" required rows="3" class="form-control" style="font-size: 0.85rem; padding: 8px 12px;" placeholder="${isAr ? 'اكتب استفسارك الطبي أو التجاري هنا بالتفصيل...' : 'Type your question here...' }"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-sm" style="width: 100%; justify-content: center;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>${isAr ? 'إرسال الاستفسار الطبي' : 'Send Inquiry'}</span>
+          </button>
+        </form>
+      </div>
+    </div>
   `;
 }
 
@@ -1040,12 +1378,12 @@ function renderAboutSection() {
       <div class="container">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;">
           <div>
-            <span class="section-tag">${isAr ? 'عن شركة أمكو' : 'About UMCO'}</span>
+            <span class="section-tag">${isAr ? 'عن شركة يمكو' : 'About YUMCO'}</span>
             <h2 class="section-title">${isAr ? 'أكثر من عقدين في خدمة الأمن الدوائي الوطني' : 'Over Two Decades of National Pharma Security'}</h2>
             <p style="color: var(--text-secondary); line-height: 1.8; margin-bottom: 20px;">
               ${isAr ? 
-                'تأسست شركة أمكو للصناعات الدوائية والطبية كإحدى الشركات الرائدة التابعة لمجموعة أمكو، وحققت على مدار أكثر من 20 عاماً مكانة مرموقة كأحد أهم صروح التصنيع الدوائي المؤتمت في اليمن. نركز على توطين الصناعات المعقمة ومراهم العلاج الجلدي لتلبية احتياجات المشافي والمراكز الطبية بأعلى درجات الموثوقية.' :
-                'Founded as a flagship subsidiary of UMCO Medical & Commercial Group, UMCO Pharmaceuticals has established itself over 20+ years as a premier automated manufacturing platform in Yemen, dedicated to localized production of sterile antiseptics and dermatology therapeutics.'
+                'تأسست شركة يمكو للصناعات الدوائية والطبية كإحدى الشركات الرائدة التابعة لمجموعة يمكو، وحققت على مدار أكثر من 20 عاماً مكانة مرموقة كأحد أهم صروح التصنيع الدوائي المؤتمت في اليمن. نركز على توطين الصناعات المعقمة ومراهم العلاج الجلدي لتلبية احتياجات المشافي والمراكز الطبية بأعلى درجات الموثوقية.' :
+                'Founded as a flagship subsidiary of YUMCO Medical & Commercial Group, YUMCO Pharmaceuticals has established itself over 20+ years as a premier automated manufacturing platform in Yemen, dedicated to localized production of sterile antiseptics and dermatology therapeutics.'
               }
             </p>
             <div style="background: var(--bg-card-subtle); padding: 24px; border-radius: var(--radius-lg); border-right: 4px solid var(--umco-red); margin-bottom: 20px;">
@@ -1068,7 +1406,7 @@ function renderAboutSection() {
             </div>
           </div>
           <div>
-            <img src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&auto=format&fit=crop&q=80" alt="UMCO Facilities" style="width: 100%; border-radius: var(--radius-xl); box-shadow: var(--shadow-xl); border: 1px solid var(--border-color);" />
+            <img src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&auto=format&fit=crop&q=80" alt="YUMCO Facilities" style="width: 100%; border-radius: var(--radius-xl); box-shadow: var(--shadow-xl); border: 1px solid var(--border-color);" />
           </div>
         </div>
       </div>
@@ -1076,12 +1414,13 @@ function renderAboutSection() {
   `;
 }
 
-// --- 10. ENTERPRISE PORTAL VIEW (HR, TASKS, NOTIFICATIONS) ---
+// --- 10. ENTERPRISE PORTAL VIEW (HR, TASKS, MARKETING, NOTIFICATIONS) ---
 function renderPortalView() {
   if (!State.user) return '';
   const isAr = State.lang === 'ar';
   const role = State.user.role;
   const isHR = role === 'super_admin' || role === 'hr_manager';
+  const isMarketing = role === 'super_admin' || role === 'marketing';
 
   return `
     <div class="portal-view">
@@ -1102,6 +1441,17 @@ function renderPortalView() {
           </div>
 
           <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            ${isMarketing ? `
+              <button class="btn btn-primary btn-sm" onclick="openModal('create-announcement-modal')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <span>${t('btn_add_announcement')}</span>
+              </button>
+              <button class="btn btn-outline btn-sm" onclick="openModal('create-product-modal')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                <span>${t('btn_add_product')}</span>
+              </button>
+            ` : ''}
+
             ${isHR ? `
               <button class="btn btn-primary btn-sm" onclick="openModal('create-employee-modal')">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
@@ -1121,14 +1471,33 @@ function renderPortalView() {
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
             <span>${t('tab_tasks')} (${State.tasks.length})</span>
           </button>
+          
+          ${isMarketing ? `
+            <button class="portal-tab-item ${State.portalTab === 'inquiries' ? 'active' : ''}" onclick="switchPortalTab('inquiries')">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              <span>${t('tab_inquiries')} (${State.inquiries.length})</span>
+            </button>
+            <button class="portal-tab-item ${State.portalTab === 'campaigns' ? 'active' : ''}" onclick="switchPortalTab('campaigns')">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              <span>${t('tab_campaigns')} (${State.announcements.length})</span>
+            </button>
+            <button class="portal-tab-item ${State.portalTab === 'products_mgmt' ? 'active' : ''}" onclick="switchPortalTab('products_mgmt')">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+              <span>${t('tab_products_mgmt')} (${State.products.length})</span>
+            </button>
+          ` : ''}
+
+          ${(isHR || isMarketing) ? `
+            <button class="portal-tab-item ${State.portalTab === 'quotes' ? 'active' : ''}" onclick="switchPortalTab('quotes')">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <span>${t('tab_rfq_review')} (${State.quotes.length})</span>
+            </button>
+          ` : ''}
+
           ${isHR ? `
             <button class="portal-tab-item ${State.portalTab === 'employees' ? 'active' : ''}" onclick="switchPortalTab('employees')">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
               <span>${t('tab_employees')} (${State.employees.length})</span>
-            </button>
-            <button class="portal-tab-item ${State.portalTab === 'quotes' ? 'active' : ''}" onclick="switchPortalTab('quotes')">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-              <span>${t('tab_rfq_review')} (${State.quotes.length})</span>
             </button>
             <button class="portal-tab-item ${State.portalTab === 'pv' ? 'active' : ''}" onclick="switchPortalTab('pv')">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
@@ -1140,6 +1509,9 @@ function renderPortalView() {
         <!-- Portal Tab Body -->
         <div>
           ${State.portalTab === 'tasks' ? renderTasksTab() : ''}
+          ${State.portalTab === 'inquiries' ? renderInquiriesTab() : ''}
+          ${State.portalTab === 'campaigns' ? renderCampaignsTab() : ''}
+          ${State.portalTab === 'products_mgmt' ? renderProductsMgmtTab() : ''}
           ${State.portalTab === 'employees' ? renderEmployeesTab() : ''}
           ${State.portalTab === 'quotes' ? renderQuotesTab() : ''}
           ${State.portalTab === 'pv' ? renderPVTab() : ''}
@@ -1245,6 +1617,213 @@ function renderTasksTab() {
   `;
 }
 
+// Marketing Inquiries Tab
+function renderInquiriesTab() {
+  const isAr = State.lang === 'ar';
+  const inquiries = State.inquiries || [];
+  const pendingCount = inquiries.filter(i => i.status === 'pending').length;
+  const repliedCount = inquiries.filter(i => i.status === 'replied').length;
+
+  return `
+    <div>
+      <div class="stats-cards-grid">
+        <div class="stat-card">
+          <div class="stat-card-icon stat-icon-blue">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <div class="stat-card-info">
+            <span class="stat-card-value">${inquiries.length}</span>
+            <span class="stat-card-label">${isAr ? 'إجمالي الاستفسارات' : 'Total Inquiries'}</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-card-icon stat-icon-amber">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="stat-card-info">
+            <span class="stat-card-value">${pendingCount}</span>
+            <span class="stat-card-label">${isAr ? 'استفسارات بانتظار الرد' : 'Pending Response'}</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-card-icon stat-icon-emerald">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <div class="stat-card-info">
+            <span class="stat-card-value">${repliedCount}</span>
+            <span class="stat-card-label">${isAr ? 'تم الرد وتقديم المشورة' : 'Replied'}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="data-table-card">
+        <div class="table-responsive">
+          <table class="styled-table">
+            <thead>
+              <tr>
+                <th>${isAr ? 'العميل / المستفسر' : 'Customer'}</th>
+                <th>${isAr ? 'الصفة' : 'Role'}</th>
+                <th>${isAr ? 'رقم الهاتف' : 'Phone'}</th>
+                <th>${isAr ? 'التصنيف' : 'Category'}</th>
+                <th>${isAr ? 'الرسالة / الاستفسار' : 'Inquiry Message'}</th>
+                <th>${isAr ? 'حالة الرد' : 'Status'}</th>
+                <th>${isAr ? 'رد مسؤول التسويق' : 'Marketing Reply'}</th>
+                <th>${isAr ? 'إجراء' : 'Action'}</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${inquiries.length === 0 ? `
+                <tr>
+                  <td colspan="8" style="text-align: center; padding: 32px; color: var(--text-muted);">
+                    ${isAr ? 'لا توجد استفسارات واردة حالياً' : 'No customer inquiries found'}
+                  </td>
+                </tr>
+              ` : inquiries.map(iq => `
+                <tr>
+                  <td>
+                    <strong style="color: var(--primary-navy);">${iq.customer_name}</strong>
+                    ${iq.email ? `<div style="font-size: 0.78rem; color: var(--text-muted);">${iq.email}</div>` : ''}
+                  </td>
+                  <td><span class="spec-chip">${iq.customer_role}</span></td>
+                  <td><a href="tel:${iq.phone}" style="color: var(--umco-red); font-weight: 700; direction: ltr; display: inline-block;">${iq.phone}</a></td>
+                  <td><span class="spec-chip">${iq.category}</span></td>
+                  <td style="max-width: 260px; font-size: 0.88rem; line-height: 1.5;">${iq.message}</td>
+                  <td>
+                    <span class="status-badge ${iq.status === 'replied' ? 'status-active' : 'kanban-badge-todo'}">
+                      ${iq.status === 'replied' ? (isAr ? 'تم الرد' : 'Replied') : (isAr ? 'قيد الانتظار' : 'Pending')}
+                    </span>
+                  </td>
+                  <td style="max-width: 260px; font-size: 0.85rem; color: var(--accent-emerald);">
+                    ${iq.reply_ar || iq.reply_en || '<em style="color: var(--text-muted);">' + (isAr ? 'لم يتم الرد بعد' : 'Not replied yet') + '</em>'}
+                  </td>
+                  <td>
+                    <button class="btn btn-outline btn-sm" onclick="openInquiryReplyModal(${iq.id})">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                      <span>${isAr ? 'رد' : 'Reply'}</span>
+                    </button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// Marketing Announcements & Campaigns Tab
+function renderCampaignsTab() {
+  const isAr = State.lang === 'ar';
+  const announcements = State.announcements || [];
+
+  return `
+    <div>
+      <div class="table-header-toolbar" style="background: #fff; border-radius: var(--radius-lg); margin-bottom: 24px; border: 1px solid var(--border-color); padding: 20px;">
+        <div>
+          <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--primary-navy);">${isAr ? 'إدارة ونشر الحملات والإعلانات الطبية' : 'Medical Campaigns & Announcements Hub'}</h3>
+          <p style="font-size: 0.85rem; color: var(--text-secondary);">${isAr ? 'نشر وتحديث الحملات التوعوية، التدشينات الدوائية، وإعلانات المستشفيات على واجهة الموقع.' : 'Publish announcements, training events, and promotional releases.'}</p>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="openModal('create-announcement-modal')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span>${t('btn_add_announcement')}</span>
+        </button>
+      </div>
+
+      <div class="announcements-grid">
+        ${announcements.map(a => `
+          <div class="announcement-card">
+            <div class="announcement-img-wrap">
+              <img src="${a.image_url || 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800'}" alt="${a.title_en}" class="announcement-img" />
+              <span class="announcement-badge">${isAr ? (a.target_audience || 'المجتمع الطبي') : (a.target_audience || 'Medical')}</span>
+            </div>
+            <div class="announcement-body">
+              <span style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 6px;">📅 ${new Date(a.created_at).toLocaleDateString(isAr ? 'ar-YE' : 'en-US')}</span>
+              <h3 class="announcement-title">${isAr ? a.title_ar : a.title_en}</h3>
+              <p class="announcement-content">${isAr ? a.content_ar : a.content_en}</p>
+              <div style="margin-top: auto; display: flex; gap: 8px;">
+                <button class="btn btn-outline-red btn-sm" style="width: 100%;" onclick="deleteAnnouncement(${a.id})">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                  <span>${isAr ? 'حذف الحملة' : 'Delete'}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+// Marketing Products Management Tab
+function renderProductsMgmtTab() {
+  const isAr = State.lang === 'ar';
+  const products = State.products || [];
+
+  return `
+    <div>
+      <div class="table-header-toolbar" style="background: #fff; border-radius: var(--radius-lg); margin-bottom: 24px; border: 1px solid var(--border-color); padding: 20px;">
+        <div>
+          <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--primary-navy);">${isAr ? 'إدارة كتالوج المستحضرات الصيدلانية' : 'Product Formulary Management'}</h3>
+          <p style="font-size: 0.85rem; color: var(--text-secondary);">${isAr ? 'إضافة وتحديث المنتجات الدوائية، التركيبات، والجرعات على الكتالوج العام.' : 'Manage medicines, active APIs, and monographs published on the portal.'}</p>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="openModal('create-product-modal')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span>${t('btn_add_product')}</span>
+        </button>
+      </div>
+
+      <div class="data-table-card">
+        <div class="table-responsive">
+          <table class="styled-table">
+            <thead>
+              <tr>
+                <th>${isAr ? 'كود الصنف' : 'SKU'}</th>
+                <th>${isAr ? 'الاسم التجاري' : 'Trade Name'}</th>
+                <th>${isAr ? 'المادة الفعالة' : 'Scientific Name'}</th>
+                <th>${isAr ? 'الشكل والتركيز' : 'Dosage & Strength'}</th>
+                <th>${isAr ? 'القسم' : 'Category'}</th>
+                <th>${isAr ? 'العبوة' : 'Packaging'}</th>
+                <th>${isAr ? 'إجراءات' : 'Actions'}</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${products.map(p => `
+                <tr>
+                  <td><strong style="color: var(--primary-navy);">${p.sku}</strong></td>
+                  <td>
+                    <strong style="color: var(--primary-crimson);">${isAr ? p.trade_name_ar : p.trade_name_en}</strong>
+                    <div style="font-size: 0.78rem; color: var(--text-muted);">${isAr ? p.trade_name_en : p.trade_name_ar}</div>
+                  </td>
+                  <td>${p.scientific_name || '-'}</td>
+                  <td>
+                    <span class="spec-chip">${isAr ? p.dosage_form_ar : p.dosage_form_en}</span>
+                    <div style="font-size: 0.78rem; color: var(--text-muted);">${p.concentration || ''}</div>
+                  </td>
+                  <td>${isAr ? p.category_name_ar : p.category_name_en}</td>
+                  <td>${p.package_size || '-'}</td>
+                  <td>
+                    <div style="display: flex; gap: 6px;">
+                      <button class="btn btn-outline btn-sm" onclick="openProductQuickView(${p.id})" title="${t('btn_quick_view')}">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                      </button>
+                      <button class="btn btn-outline-red btn-sm" onclick="deleteProduct(${p.id})" title="Delete">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 // HR Employee Directory Tab (كل موظف يدخله الـ HR)
 function renderEmployeesTab() {
   const isAr = State.lang === 'ar';
@@ -1252,7 +1831,7 @@ function renderEmployeesTab() {
     <div>
       <div class="table-header-toolbar" style="background: #fff; border-radius: var(--radius-lg); margin-bottom: 24px; border: 1px solid var(--border-color);">
         <div>
-          <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--primary-navy);">${isAr ? 'سجل كوادر وموظفي شركة أمكو الدوائية' : 'UMCO Employee Personnel Records'}</h3>
+          <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--primary-navy);">${isAr ? 'سجل كوادر وموظفي شركة يمكو الدوائية' : 'YUMCO Employee Personnel Records'}</h3>
           <p style="font-size: 0.85rem; color: var(--text-secondary);">${isAr ? 'إدارة بيانات الكوادر، الأقسام، والفروع المصرحة من إدارة الموارد البشرية.' : 'Manage employee profiles, departments, and credentials.'}</p>
         </div>
         <button class="btn btn-primary btn-sm" onclick="openModal('create-employee-modal')">
@@ -1402,10 +1981,10 @@ function renderFooter() {
         <div class="footer-grid">
           <div>
             <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
-              <div class="logo-badge">UM</div>
+              <div class="logo-badge">YM</div>
               <div style="display: flex; flex-direction: column;">
-                <span style="font-size: 1.3rem; font-weight: 800; color: #fff;">${isAr ? 'أمكو للصناعات الدوائية' : 'UMCO PHARMACEUTICALS'}</span>
-                <span style="font-size: 0.8rem; color: #F87171;">${isAr ? 'شركة أمكو للصناعات الطبية والدوائية' : 'Medical & Pharma Industries'}</span>
+                <span style="font-size: 1.3rem; font-weight: 800; color: #fff;">${isAr ? 'يمكو للصناعات الدوائية' : 'YUMCO PHARMACEUTICALS'}</span>
+                <span style="font-size: 0.8rem; color: #F87171;">${isAr ? 'شركة يمكو للصناعات الطبية والدوائية' : 'Medical & Pharma Industries'}</span>
               </div>
             </div>
             <p style="font-size: 0.95rem; line-height: 1.7; margin-bottom: 20px;">
@@ -1423,7 +2002,9 @@ function renderFooter() {
             <h4 class="footer-col-title">${isAr ? 'روابط سريعة' : 'Quick Links'}</h4>
             <ul class="footer-links-list">
               <li><a href="#hero" class="footer-link">${t('nav_home')}</a></li>
+              <li><a href="#campaigns" class="footer-link">${t('nav_campaigns')}</a></li>
               <li><a href="#products" class="footer-link">${t('nav_products')}</a></li>
+              <li><a href="#clinical" class="footer-link">${t('nav_clinical')}</a></li>
               <li><a href="#manufacturing" class="footer-link">${t('nav_manufacturing')}</a></li>
               <li><a href="#branches" class="footer-link">${t('nav_branches')}</a></li>
               <li><a href="#rfq" class="footer-link">${t('nav_rfq')}</a></li>
@@ -1434,10 +2015,10 @@ function renderFooter() {
             <h4 class="footer-col-title">${isAr ? 'المنتجات الرئيسية' : 'Key Formulations'}</h4>
             <ul class="footer-links-list">
               <li><a href="#products" class="footer-link">Femicare Povidone Iodine</a></li>
-              <li><a href="#products" class="footer-link">Umco Cort-N Ointment</a></li>
-              <li><a href="#products" class="footer-link">Umco Thrin Cream 5%</a></li>
-              <li><a href="#products" class="footer-link">Umco Scrub Surgical</a></li>
-              <li><a href="#products" class="footer-link">Umco Burn Gel</a></li>
+              <li><a href="#products" class="footer-link">Yumco Cort-N Ointment</a></li>
+              <li><a href="#products" class="footer-link">Yumco Thrin Cream 5%</a></li>
+              <li><a href="#products" class="footer-link">Yumco Scrub Surgical</a></li>
+              <li><a href="#products" class="footer-link">Yumco Burn Gel</a></li>
             </ul>
           </div>
 
@@ -1457,7 +2038,7 @@ function renderFooter() {
 
         <div class="footer-bottom">
           <div>
-            © 2026 ${isAr ? 'شركة أمكو للصناعات الدوائية والطبية. كافة الحقوق محفوظة.' : 'UMCO Pharmaceuticals & Medical Industries. All rights reserved.'}
+            © 2026 ${isAr ? 'شركة يمكو للصناعات الدوائية والطبية. كافة الحقوق محفوظة.' : 'YUMCO Pharmaceuticals & Medical Industries. All rights reserved.'}
           </div>
           <div>
             <span style="color: #10B981;">●</span> GMP & ISO 9001 Certified System
@@ -1491,9 +2072,10 @@ function renderModals() {
             </div>
             <div style="background: var(--bg-card-subtle); padding: 12px; border-radius: var(--radius-sm); font-size: 0.8rem; color: var(--text-secondary);">
               <strong>${isAr ? 'حسابات تجريبية سريعة:' : 'Demo Accounts:'}</strong><br/>
-              - HR: hr@umcopharma.com | hr123<br/>
-              - Admin: admin@umcopharma.com | admin123<br/>
-              - Engineer: tariq.saleh@umcopharma.com | emp123
+              - <strong>Marketing:</strong> marketing@umcopharma.com | marketing123<br/>
+              - <strong>HR Manager:</strong> hr@umcopharma.com | hr123<br/>
+              - <strong>Super Admin:</strong> admin@umcopharma.com | admin123<br/>
+              - <strong>Engineer:</strong> tariq.saleh@umcopharma.com | emp123
             </div>
           </div>
           <div class="modal-footer">
@@ -1501,6 +2083,148 @@ function renderModals() {
             <button type="submit" class="btn btn-primary">${t('btn_login')}</button>
           </div>
         </form>
+      </div>
+    </div>
+
+    <!-- Create Announcement Modal (Marketing / Admin) -->
+    <div id="create-announcement-modal" class="modal-backdrop">
+      <div class="modal-container" style="max-width: 640px;">
+        <div class="modal-header">
+          <h3 class="modal-title">${t('btn_add_announcement')}</h3>
+          <button class="btn btn-icon-only" onclick="closeModal('create-announcement-modal')">✕</button>
+        </div>
+        <form onsubmit="submitCreateAnnouncement(event)">
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="form-label">${isAr ? 'عنوان الإعلان / الحملة بالعربية *' : 'Campaign Title (Arabic) *'}</label>
+              <input type="text" name="title_ar" required class="form-control" placeholder="حملة التوعية بالمطهرات الجراحية..." />
+            </div>
+            <div class="form-group">
+              <label class="form-label">${isAr ? 'عنوان الحملة بالإنجليزية *' : 'Campaign Title (English) *'}</label>
+              <input type="text" name="title_en" required class="form-control" placeholder="Hospital Infection Control Campaign..." />
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label class="form-label">${isAr ? 'نوع الحملة' : 'Campaign Type'}</label>
+                <select name="campaign_type" class="form-control">
+                  <option value="medical_campaign">${isAr ? 'حملة طبية توعوية' : 'Medical Campaign'}</option>
+                  <option value="product_launch">${isAr ? 'تدشين مستحضر جديد' : 'Product Launch'}</option>
+                  <option value="conference">${isAr ? 'مؤتمر / ورشة عمل' : 'Conference / Workshop'}</option>
+                  <option value="general_announcement">${isAr ? 'إعلان عام' : 'General Announcement'}</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">${isAr ? 'الجمهور المستهدف' : 'Target Audience'}</label>
+                <input type="text" name="target_audience" class="form-control" placeholder="${isAr ? 'المشافي، الصيادلة، الأطباء' : 'Hospitals, Doctors, Pharmacists'}" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">${isAr ? 'رابط صورة البانر (URL)' : 'Banner Image URL'}</label>
+              <input type="url" name="image_url" class="form-control" value="https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">${isAr ? 'نص وتفاصيل الإعلان بالعربية *' : 'Content (Arabic) *'}</label>
+              <textarea name="content_ar" rows="3" required class="form-control" placeholder="اكتب تفاصيل الحملة الطبية وأهدافها هنا..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">${isAr ? 'نص وتفاصيل الإعلان بالإنجليزية' : 'Content (English)'}</label>
+              <textarea name="content_en" rows="2" class="form-control"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline" onclick="closeModal('create-announcement-modal')">${isAr ? 'إلغاء' : 'Cancel'}</button>
+            <button type="submit" class="btn btn-primary">${isAr ? 'نشر الإعلان فوراً' : 'Publish Announcement'}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Create Product Modal (Marketing / Admin) -->
+    <div id="create-product-modal" class="modal-backdrop">
+      <div class="modal-container" style="max-width: 680px;">
+        <div class="modal-header">
+          <h3 class="modal-title">${t('btn_add_product')}</h3>
+          <button class="btn btn-icon-only" onclick="closeModal('create-product-modal')">✕</button>
+        </div>
+        <form onsubmit="submitCreateProduct(event)">
+          <div class="modal-body">
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label class="form-label">${isAr ? 'الاسم التجاري بالعربية *' : 'Trade Name (AR) *'}</label>
+                <input type="text" name="trade_name_ar" required class="form-control" placeholder="يمكو سكراب غسول" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">${isAr ? 'الاسم التجاري بالإنجليزية *' : 'Trade Name (EN) *'}</label>
+                <input type="text" name="trade_name_en" required class="form-control" placeholder="Yumco Scrub Surgical" />
+              </div>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label class="form-label">${isAr ? 'المادة العلمية الفعالة (API) *' : 'Scientific Name *'}</label>
+                <input type="text" name="scientific_name" required class="form-control" placeholder="Chlorhexidine Gluconate 4%" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">${isAr ? 'التصنيف الصيدلاني *' : 'Category *'}</label>
+                <select name="category_id" required class="form-control">
+                  ${State.categories.map(c => `<option value="${c.id}">${isAr ? c.name_ar : c.name_en}</option>`).join('')}
+                </select>
+              </div>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label class="form-label">${isAr ? 'الشكل الصيدلاني *' : 'Dosage Form *'}</label>
+                <input type="text" name="dosage_form_ar" required class="form-control" placeholder="محلول جراحي رغوي" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">${isAr ? 'الشكل بالإنجليزية' : 'Dosage Form (EN)'}</label>
+                <input type="text" name="dosage_form_en" class="form-control" placeholder="Surgical Foaming Solution" />
+              </div>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label class="form-label">${isAr ? 'التركيز' : 'Strength'}</label>
+                <input type="text" name="concentration" class="form-control" placeholder="4% w/v" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">${isAr ? 'حجم العبوة' : 'Package Size'}</label>
+                <input type="text" name="package_size" class="form-control" placeholder="عبوة 500 مل بمضخة" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">${isAr ? 'رابط صورة المستحضر (URL)' : 'Product Image URL'}</label>
+              <input type="url" name="image_url" class="form-control" value="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=800" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">${isAr ? 'دواعي الاستعمال المعتمدة' : 'Clinical Indications'}</label>
+              <textarea name="indications_ar" rows="2" class="form-control" placeholder="تطهير الأيدي والجلد قبل العمليات الجراحية..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">${isAr ? 'طريقة الاستخدام المقررة' : 'Usage Instructions'}</label>
+              <textarea name="usage_instructions_ar" rows="2" class="form-control" placeholder="يفرك الجلد لمدة دقيقتين ثم يغسل بالماء المعقم..."></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline" onclick="closeModal('create-product-modal')">${isAr ? 'إلغاء' : 'Cancel'}</button>
+            <button type="submit" class="btn btn-primary">${isAr ? 'حفظ وإدراج في الكتالوج' : 'Add to Formulary'}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Inquiry Reply Modal (Marketing / Admin) -->
+    <div id="inquiry-reply-modal" class="modal-backdrop">
+      <div class="modal-container" style="max-width: 550px;" id="inquiry-reply-content">
+        <!-- Rendered dynamically -->
       </div>
     </div>
 
@@ -1985,7 +2709,7 @@ function openPrintableCatalog() {
     <div class="modal-header no-print">
       <div style="display: flex; align-items: center; gap: 10px;">
         <svg width="22" height="22" color="var(--primary-crimson)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-        <h3 class="modal-title">${isAr ? 'الكتالوج الدوائي المعتمد - شركة أمكو للصناعات الدوائية' : 'UMCO Pharmaceuticals - Official Product Monograph Catalog'}</h3>
+        <h3 class="modal-title">${isAr ? 'الكتالوج الدوائي المعتمد - شركة يمكو للصناعات الدوائية' : 'YUMCO Pharmaceuticals - Official Product Monograph Catalog'}</h3>
       </div>
       <button class="btn btn-icon-only" onclick="closeModal('catalog-print-modal')">✕</button>
     </div>
@@ -1993,9 +2717,9 @@ function openPrintableCatalog() {
     <div class="modal-body printable-catalog-sheet">
       <div class="catalog-print-header">
         <div class="catalog-print-logo-area">
-          <div class="logo-badge" style="width: 44px; height: 44px; font-size: 1.2rem;">UM</div>
+          <div class="logo-badge" style="width: 44px; height: 44px; font-size: 1.2rem;">YM</div>
           <div>
-            <div style="font-size: 1.25rem; font-weight: 800; color: #0A1E3F;">${isAr ? 'شركة أمكو للصناعات الدوائية والطبية' : 'UMCO Pharmaceuticals & Medical Industries Co.'}</div>
+            <div style="font-size: 1.25rem; font-weight: 800; color: #0A1E3F;">${isAr ? 'شركة يمكو للصناعات الدوائية والطبية' : 'YUMCO Pharmaceuticals & Medical Industries Co.'}</div>
             <div style="font-size: 0.8rem; color: #C8102E; font-weight: 700;">${isAr ? 'المقر الرئيسي: صنعاء، شارع حدة، مبنى 64 (+967 1 414035)' : 'HQ: Hadda St, Bldg 64, Sana\'a, Yemen (+967 1 414035)'}</div>
           </div>
         </div>
@@ -2053,7 +2777,7 @@ function openPrintableCatalog() {
           د. عبدالله إسحاق (+967 776 666 676)
         </div>
         <div>
-          ${isAr ? 'وثيقة رسمية صادرة آلياً عن منصة أمكو للعمليات الدوائية' : 'Official Document Generated via UMCO Pharma Platform'}
+          ${isAr ? 'وثيقة رسمية صادرة آلياً عن منصة يمكو للعمليات الدوائية' : 'Official Document Generated via YUMCO Pharma Platform'}
         </div>
       </div>
     </div>
@@ -2068,6 +2792,151 @@ function openPrintableCatalog() {
   `;
 
   openModal('catalog-print-modal');
+}
+
+// Floating Inquiry & Customer Engagement Handlers
+function toggleInquiryWidget() {
+  State.inquiryWidgetOpen = !State.inquiryWidgetOpen;
+  const panel = document.getElementById('floating-inquiry-panel');
+  if (panel) {
+    if (State.inquiryWidgetOpen) panel.classList.add('open');
+    else panel.classList.remove('open');
+  } else {
+    renderApp();
+  }
+}
+
+async function submitInquiry(e) {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const data = Object.fromEntries(fd.entries());
+
+  const res = await API.post('/inquiries', data);
+  if (res.success) {
+    showToast(State.lang === 'ar' ? res.message_ar : res.message_en, 'success');
+    e.target.reset();
+    State.inquiryWidgetOpen = false;
+    renderApp();
+  } else {
+    showToast('Failed to submit inquiry', 'error');
+  }
+}
+
+function openInquiryReplyModal(inquiryId) {
+  const iq = State.inquiries.find(item => item.id === inquiryId);
+  if (!iq) return;
+  const isAr = State.lang === 'ar';
+  const container = document.getElementById('inquiry-reply-content');
+  if (!container) return;
+
+  container.innerHTML = `
+    <div class="modal-header">
+      <h3 class="modal-title">${isAr ? 'الرد الطبي / التسويقي على الاستفسار' : 'Reply to Medical Inquiry'}</h3>
+      <button class="btn btn-icon-only" onclick="closeModal('inquiry-reply-modal')">✕</button>
+    </div>
+    <form onsubmit="submitInquiryReply(event, ${iq.id})">
+      <div class="modal-body">
+        <div style="background: var(--bg-card-subtle); padding: 16px; border-radius: var(--radius-md); margin-bottom: 16px;">
+          <div style="font-size: 0.9rem; margin-bottom: 4px;"><strong>${isAr ? 'العميل:' : 'Customer:'}</strong> ${iq.customer_name} (${iq.customer_role})</div>
+          <div style="font-size: 0.9rem; margin-bottom: 6px;"><strong>${isAr ? 'الهاتف:' : 'Phone:'}</strong> ${iq.phone}</div>
+          <div style="font-size: 0.9rem; color: var(--text-primary); line-height: 1.5;"><strong>${isAr ? 'الاستفسار:' : 'Inquiry:'}</strong> ${iq.message}</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">${isAr ? 'نص الرد والتوجيه الصيدلاني (بالعربية) *' : 'Reply Content (Arabic) *'}</label>
+          <textarea name="reply_ar" rows="4" required class="form-control" placeholder="${isAr ? 'اكتب ردك الطبي المفصل هنا لتزويد العميل به...' : 'Type clinical or commercial reply...'}">${iq.reply_ar || ''}</textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">${isAr ? 'نص الرد بالإنجليزية' : 'Reply Content (English)'}</label>
+          <textarea name="reply_en" rows="2" class="form-control" placeholder="Optional English translation...">${iq.reply_en || ''}</textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeModal('inquiry-reply-modal')">${isAr ? 'إلغاء' : 'Cancel'}</button>
+        <button type="submit" class="btn btn-primary">${isAr ? 'إرسال الرد واعتماده' : 'Submit Reply'}</button>
+      </div>
+    </form>
+  `;
+
+  openModal('inquiry-reply-modal');
+}
+
+async function submitInquiryReply(e, inquiryId) {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const data = Object.fromEntries(fd.entries());
+
+  const res = await API.put(`/inquiries/${inquiryId}/reply`, data, true);
+  if (res.success) {
+    showToast(State.lang === 'ar' ? res.message_ar : res.message_en, 'success');
+    closeModal('inquiry-reply-modal');
+    await loadPortalData();
+    renderApp();
+  } else {
+    showToast('Failed to submit reply', 'error');
+  }
+}
+
+// Marketing Announcements Handlers
+async function submitCreateAnnouncement(e) {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const data = Object.fromEntries(fd.entries());
+
+  const res = await API.post('/announcements', data, true);
+  if (res.success) {
+    showToast(State.lang === 'ar' ? res.message_ar : res.message_en, 'success');
+    closeModal('create-announcement-modal');
+    await loadAnnouncementsData();
+    await loadPortalData();
+    renderApp();
+  } else {
+    showToast('Failed to create announcement', 'error');
+  }
+}
+
+async function deleteAnnouncement(id) {
+  if (!confirm(State.lang === 'ar' ? 'هل أنت متأكد من حذف هذا الإعلان / الحملة؟' : 'Are you sure you want to delete this campaign?')) return;
+  const res = await API.delete(`/announcements/${id}`, true);
+  if (res.success) {
+    showToast(State.lang === 'ar' ? res.message_ar : res.message_en, 'success');
+    await loadAnnouncementsData();
+    await loadPortalData();
+    renderApp();
+  } else {
+    showToast('Failed to delete announcement', 'error');
+  }
+}
+
+// Marketing Product Management Handlers
+async function submitCreateProduct(e) {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const data = Object.fromEntries(fd.entries());
+  data.category_id = parseInt(data.category_id, 10);
+
+  const res = await API.post('/products', data, true);
+  if (res.success) {
+    showToast(State.lang === 'ar' ? res.message_ar : res.message_en, 'success');
+    closeModal('create-product-modal');
+    await loadCatalogData();
+    renderApp();
+  } else {
+    showToast(State.lang === 'ar' ? res.message_ar : res.message_en, 'error');
+  }
+}
+
+async function deleteProduct(id) {
+  if (!confirm(State.lang === 'ar' ? 'هل أنت متأكد من حذف هذا المستحضر الدوائي من الكتالوج؟' : 'Are you sure you want to remove this product?')) return;
+  const res = await API.delete(`/products/${id}`, true);
+  if (res.success) {
+    showToast(State.lang === 'ar' ? res.message_ar : res.message_en, 'success');
+    await loadCatalogData();
+    renderApp();
+  } else {
+    showToast('Failed to delete product', 'error');
+  }
 }
 
 // RFQ Cart Helpers
@@ -2105,6 +2974,7 @@ function formatRole(role) {
   const isAr = State.lang === 'ar';
   const roles = {
     super_admin: isAr ? 'مشرف النظام العام' : 'Super Admin',
+    marketing: isAr ? 'مسؤول التسويق والإعلام الدوائي وخدمة العملاء' : 'Marketing & Medical Media Specialist',
     hr_manager: isAr ? 'مدير الموارد البشرية' : 'HR Manager',
     branch_manager: isAr ? 'مدير فرع' : 'Branch Manager',
     employee: isAr ? 'موظف اختصاصي' : 'Specialist Employee',

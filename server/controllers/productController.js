@@ -179,8 +179,111 @@ const createProduct = async (req, res) => {
   }
 };
 
+const updateProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ success: false, message_en: 'Product ID required.', message_ar: 'معرف المنتج مطلوب.' });
+    }
+    const product = get('SELECT * FROM products WHERE id = ?', [id]);
+    if (!product) {
+      return res.status(404).json({ success: false, message_en: 'Product not found.', message_ar: 'المنتج غير موجود.' });
+    }
+
+    const {
+      category_id,
+      slug,
+      sku,
+      trade_name_ar,
+      trade_name_en,
+      scientific_name,
+      dosage_form_ar,
+      dosage_form_en,
+      concentration,
+      package_size,
+      indications_ar,
+      indications_en,
+      usage_instructions_ar,
+      usage_instructions_en,
+      storage_conditions_ar,
+      storage_conditions_en,
+      image_url,
+      datasheet_url,
+      is_featured,
+      is_active
+    } = req.body;
+
+    run(`
+      UPDATE products
+      SET category_id = COALESCE(?, category_id),
+          slug = COALESCE(?, slug),
+          sku = COALESCE(?, sku),
+          trade_name_ar = COALESCE(?, trade_name_ar),
+          trade_name_en = COALESCE(?, trade_name_en),
+          scientific_name = COALESCE(?, scientific_name),
+          dosage_form_ar = COALESCE(?, dosage_form_ar),
+          dosage_form_en = COALESCE(?, dosage_form_en),
+          concentration = COALESCE(?, concentration),
+          package_size = COALESCE(?, package_size),
+          indications_ar = COALESCE(?, indications_ar),
+          indications_en = COALESCE(?, indications_en),
+          usage_instructions_ar = COALESCE(?, usage_instructions_ar),
+          usage_instructions_en = COALESCE(?, usage_instructions_en),
+          storage_conditions_ar = COALESCE(?, storage_conditions_ar),
+          storage_conditions_en = COALESCE(?, storage_conditions_en),
+          image_url = COALESCE(?, image_url),
+          datasheet_url = COALESCE(?, datasheet_url),
+          is_featured = COALESCE(?, is_featured),
+          is_active = COALESCE(?, is_active),
+          updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `, [
+      category_id, slug, sku, trade_name_ar, trade_name_en,
+      scientific_name, dosage_form_ar, dosage_form_en, concentration,
+      package_size, indications_ar, indications_en, usage_instructions_ar,
+      usage_instructions_en, storage_conditions_ar, storage_conditions_en,
+      image_url, datasheet_url, is_featured, is_active,
+      id
+    ]);
+
+    return res.json({
+      success: true,
+      message_en: 'Product updated successfully.',
+      message_ar: 'تم تحديث بيانات المنتج بنجاح.'
+    });
+  } catch (err) {
+    console.error('updateProduct error:', err);
+    return res.status(500).json({
+      success: false,
+      message_en: 'Failed to update product.',
+      message_ar: 'فشل في تحديث المنتج.'
+    });
+  }
+};
+
+const deleteProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    run('UPDATE products SET is_active = 0 WHERE id = ?', [id]);
+    return res.json({
+      success: true,
+      message_en: 'Product archived successfully.',
+      message_ar: 'تمت أرشفة المنتج بنجاح.'
+    });
+  } catch (err) {
+    console.error('deleteProduct error:', err);
+    return res.status(500).json({
+      success: false,
+      message_en: 'Failed to archive product.',
+      message_ar: 'فشل في أرشفة المنتج.'
+    });
+  }
+};
+
 module.exports = {
   getProducts,
   getProductBySlug,
-  createProduct
+  createProduct,
+  updateProduct,
+  deleteProduct
 };

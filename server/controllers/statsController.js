@@ -10,6 +10,8 @@ const getSystemStats = async (req, res) => {
     const tasksPending = get("SELECT COUNT(*) as count FROM tasks WHERE status IN ('todo', 'in_progress', 'in_review')");
     const quotesTotal = get('SELECT COUNT(*) as count FROM quote_requests');
     const pvReports = get('SELECT COUNT(*) as count FROM pharmacovigilance_reports');
+    const announcementsCount = get('SELECT COUNT(*) as count FROM announcements WHERE is_active = 1');
+    const inquiriesCount = get('SELECT COUNT(*) as count FROM customer_inquiries');
 
     const recentTasks = query(`
       SELECT t.*, u.name_ar as assignee_name_ar, u.name_en as assignee_name_en
@@ -38,7 +40,9 @@ const getSystemStats = async (req, res) => {
           pending: tasksPending.count
         },
         quotes: quotesTotal.count,
-        pvReports: pvReports.count
+        pvReports: pvReports.count,
+        announcements: announcementsCount ? announcementsCount.count : 0,
+        inquiries: inquiriesCount ? inquiriesCount.count : 0
       },
       recentTasks,
       recentQuotes
