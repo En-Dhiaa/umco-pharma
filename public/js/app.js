@@ -606,122 +606,323 @@ function renderApp() {
   attachViewEvents();
 
   if (State.view === 'public') {
-    setTimeout(initBranchesMap, 100);
+    setTimeout(() => {
+      initBranchesMap();
+      if (typeof initHeroSlider === 'function') {
+        initHeroSlider();
+      }
+    }, 100);
   }
 }
 
-// Top Notice Bar
+// Top Notice Bar (Integrated directly in two-tier header)
 function renderTopNoticeBar() {
-  return `
-    <div class="top-notice-bar">
-      <div class="container top-bar-content">
-        <div class="top-bar-contact">
-          <div class="top-bar-item">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            <span>${t('top_contact_sana')}</span>
-          </div>
-          <div class="top-bar-item">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            <span>${t('top_email')}</span>
-          </div>
-        </div>
-        <div class="top-bar-item" style="color: #F87171; font-weight: 700;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-          <span>${t('top_emergency_rep')}</span>
-        </div>
-      </div>
-    </div>
-  `;
+  return '';
 }
 
-// Navigation Bar
+// Master Two-Tier Navigation Header (Matching screenshot layout & structure)
 function renderNavbar() {
   const isAr = State.lang === 'ar';
   const unreadCount = State.notifications.filter(n => !n.is_read).length;
   const s = State.settings || {};
 
-  const brandName = isAr ? (s.company_name_ar || 'يمكو للصناعات الدوائية') : (s.company_name_en || 'YUMCO PHARMA');
-  const brandSub = isAr ? (s.company_sub_ar || 'جودة دوائية تفوق التوقعات') : (s.company_sub_en || 'Pharmaceutical Excellence');
-  const badgeText = s.logo_badge_text || 'YM';
-  const logoImg = s.logo_image_url;
-  const logoSize = s.logo_size ? `${s.logo_size}px` : '40px';
-
-  // Dynamic links from settings or defaults
-  const navLinks = (s.nav_links && Array.isArray(s.nav_links))
-    ? s.nav_links.filter(l => l.enabled !== false)
-    : [
-        { label_ar: t('nav_home'), label_en: 'Home', url: '#hero' },
-        { label_ar: t('nav_campaigns'), label_en: 'Campaigns', url: '#campaigns' },
-        { label_ar: t('nav_products'), label_en: 'Products', url: '#products' },
-        { label_ar: t('nav_clinical'), label_en: 'Clinical Guide', url: '#clinical' },
-        { label_ar: t('nav_manufacturing'), label_en: 'Manufacturing', url: '#manufacturing' },
-        { label_ar: t('nav_branches'), label_en: 'Branches', url: '#branches' },
-        { label_ar: t('nav_rfq'), label_en: 'RFQ', url: '#rfq' },
-        { label_ar: t('nav_pv'), label_en: 'PV Hub', url: '#pv' },
-        { label_ar: t('nav_about'), label_en: 'About', url: '#about' }
-      ];
+  const brandName = isAr ? (s.company_name_ar || 'يمكو للصناعات الدوائية') : (s.company_name_en || 'UMCO Pharmaceuticals');
+  const brandSub = isAr ? (s.company_sub_ar || 'الصناعات الدوائية والطبية') : (s.company_sub_en || 'Pharmaceutical Industries');
+  const logoImg = s.logo_image_url || '/wp-content/uploads/2024/11/logo-new3-jpg.webp';
 
   return `
-    <nav class="navbar">
-      <div class="container navbar-container">
-        <div class="brand-logo" onclick="switchView('public')">
-          <div class="logo-badge" style="width: ${logoSize}; height: ${logoSize};">
-            ${logoImg ? `<img src="${logoImg}" alt="Logo" style="width: 100%; height: 100%; object-fit: contain; border-radius: inherit;">` : badgeText}
+    <header class="umco-header">
+      <div class="umco-header-wrapper">
+        <!-- Left Solid Crimson Brand Block -->
+        <a href="#hero" class="header-brand-block" onclick="switchView('public'); window.scrollTo({top:0, behavior:'smooth'});" title="${brandName}">
+          <img src="${logoImg}" alt="${brandName}" class="header-brand-logo" />
+          <span class="header-brand-sub">${brandSub}</span>
+        </a>
+
+        <!-- Right Main Column: Top Bar + Nav Bar -->
+        <div class="header-main-content">
+          <!-- Top Row: Contact Details & GET A QUOTE Button -->
+          <div class="header-top-row">
+            <div class="header-top-info">
+              <span>Haddah, Next to Kamran Co., Sana'a, Yemen</span>
+              <span class="top-info-sep">|</span>
+              <a href="tel:+96701414035" class="top-info-link">+967 01 414035</a>
+              <span class="top-info-sep">|</span>
+              <a href="mailto:info@umcopharma.com" class="top-info-link">info@umcopharma.com</a>
+            </div>
+            <button class="header-quote-btn" onclick="openRFQModal()">
+              ${isAr ? 'طلب عرض أسعار' : 'GET A QUOTE'}
+            </button>
           </div>
-          <div class="brand-text">
-            <span class="brand-name">${brandName}</span>
-            <span class="brand-sub">${brandSub}</span>
-          </div>
+
+          <!-- Bottom Nav Row (Deep Navy #0A192F) -->
+          <nav class="header-nav-row">
+            <ul class="header-nav-list">
+              <!-- HOME (Solid Red Active Tab) -->
+              <li class="nav-item">
+                <a href="#hero" class="nav-link active-home-tab" onclick="switchView('public'); window.scrollTo({top:0, behavior:'smooth'});">
+                  ${isAr ? 'الرئيسية' : 'HOME'}
+                </a>
+              </li>
+
+              <!-- ABOUT Dropdown -->
+              <li class="nav-item has-dropdown">
+                <a href="#about" class="nav-link" onclick="event.preventDefault(); scrollToSection('about')">
+                  <span>${isAr ? 'عن الشركة' : 'ABOUT'}</span>
+                  <svg class="dropdown-caret" viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+                </a>
+                <div class="header-dropdown-menu">
+                  <a href="#about-intro" class="dropdown-item" onclick="scrollToSection('about-intro')">
+                    <span class="dropdown-icon">🏢</span>
+                    <div class="dropdown-text">
+                      <strong>${isAr ? 'مقدمة عن الشركة' : 'Introduction'}</strong>
+                      <small>${isAr ? 'تاريخ يمتد لأكثر من 20 عاماً' : '20+ years market history'}</small>
+                    </div>
+                  </a>
+                  <a href="#vision-mission" class="dropdown-item" onclick="scrollToSection('vision-mission')">
+                    <span class="dropdown-icon">🎯</span>
+                    <div class="dropdown-text">
+                      <strong>${isAr ? 'الرؤية والرسالة' : 'Vision & Mission'}</strong>
+                      <small>${isAr ? 'قيم التميز والجودة الدوائية' : 'Excellence in healthcare'}</small>
+                    </div>
+                  </a>
+                  <a href="#facilities" class="dropdown-item" onclick="scrollToSection('facilities')">
+                    <span class="dropdown-icon">🏭</span>
+                    <div class="dropdown-text">
+                      <strong>${isAr ? 'منشآتنا ومصانعنا' : 'Our Facilities'}</strong>
+                      <small>${isAr ? '3 خطوط إنتاج ومختبر متقدم' : '3 auto lines & advanced lab'}</small>
+                    </div>
+                  </a>
+                  <a href="#plan" class="dropdown-item" onclick="scrollToSection('plan')">
+                    <span class="dropdown-icon">🚀</span>
+                    <div class="dropdown-text">
+                      <strong>${isAr ? 'خطتنا وتوسعاتنا' : 'Our Plan'}</strong>
+                      <small>${isAr ? 'المصنع الجديد للشراب والأقراص' : 'Syrups & tablets factory'}</small>
+                    </div>
+                  </a>
+                  <a href="#partners" class="dropdown-item" onclick="scrollToSection('partners')">
+                    <span class="dropdown-icon">🤝</span>
+                    <div class="dropdown-text">
+                      <strong>${isAr ? 'شراكاتنا الدولية' : 'Partnerships'}</strong>
+                      <small>${isAr ? 'وكالات عالمية ومحلية معتمدة' : 'Global & local alliances'}</small>
+                    </div>
+                  </a>
+                  <a href="#activities" class="dropdown-item" onclick="scrollToSection('activities')">
+                    <span class="dropdown-icon">📊</span>
+                    <div class="dropdown-text">
+                      <strong>${isAr ? 'أنشطتنا التجارية' : 'Business Activities'}</strong>
+                      <small>${isAr ? 'توريد الأدوية والمستلزمات الطبية' : 'Medicines & medical supplies'}</small>
+                    </div>
+                  </a>
+                  <a href="#why-choose-us" class="dropdown-item" onclick="scrollToSection('why-choose-us')">
+                    <span class="dropdown-icon">⭐</span>
+                    <div class="dropdown-text">
+                      <strong>${isAr ? 'لماذا تختار يمكو' : 'Why Choose Us'}</strong>
+                      <small>${isAr ? 'التزامات المعايير الستة الصارمة' : 'Our 6 core commitments'}</small>
+                    </div>
+                  </a>
+                  <a href="#certificates" class="dropdown-item" onclick="scrollToSection('certificates')">
+                    <span class="dropdown-icon">📜</span>
+                    <div class="dropdown-text">
+                      <strong>${isAr ? 'شهاداتنا وتراخيصنا' : 'Our Certificates'}</strong>
+                      <small>${isAr ? 'الهيئة العليا ووزارة الصحة' : 'MoH & Supreme Drug Board'}</small>
+                    </div>
+                  </a>
+                  <a href="#leadership" class="dropdown-item" onclick="scrollToSection('leadership')">
+                    <span class="dropdown-icon">👥</span>
+                    <div class="dropdown-text">
+                      <strong>${isAr ? 'فريق القيادة' : 'Leadership Team'}</strong>
+                      <small>${isAr ? 'قيادة تنفيذية متخصصة ومتميزة' : 'Executive Management'}</small>
+                    </div>
+                  </a>
+                </div>
+              </li>
+
+              <!-- PRODUCTS Dropdown -->
+              <li class="nav-item has-dropdown">
+                <a href="#products" class="nav-link" onclick="event.preventDefault(); scrollToSection('products')">
+                  <span>${isAr ? 'المنتجات' : 'PRODUCTS'}</span>
+                  <svg class="dropdown-caret" viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+                </a>
+                <div class="header-dropdown-menu dropdown-wide">
+                  <div class="dropdown-cols">
+                    <div class="dropdown-col">
+                      <span class="dropdown-col-title">${isAr ? 'الأدوية والمستحضرات الدوائية' : 'Pharmaceuticals Products'}</span>
+                      <a href="#products" class="dropdown-item" onclick="filterCategoryAndScroll('sterilizers-antiseptics')">
+                        <span class="dropdown-icon">🧴</span>
+                        <div class="dropdown-text">
+                          <strong>${isAr ? 'المطهرات والمعقمات الجراحية' : 'Medical & Surgical Sterilizers'}</strong>
+                          <small>UMCANOL, SADEX, VETOL PLUS...</small>
+                        </div>
+                      </a>
+                      <a href="#products" class="dropdown-item" onclick="filterCategoryAndScroll('ointments-creams-gels')">
+                        <span class="dropdown-icon">🧪</span>
+                        <div class="dropdown-text">
+                          <strong>${isAr ? 'المراهم والكريمات والجل' : 'Ointments, Creams & Gels'}</strong>
+                          <small>Facid, UMCO CORT, Dactazon...</small>
+                        </div>
+                      </a>
+                      <a href="#products" class="dropdown-item" onclick="filterCategoryAndScroll('medical-drops')">
+                        <span class="dropdown-icon">💧</span>
+                        <div class="dropdown-text">
+                          <strong>${isAr ? 'قطرات الأذن والأنف' : 'Drops Section'}</strong>
+                          <small>UMCOZAL, Rhinofin, Otocare...</small>
+                        </div>
+                      </a>
+                      <a href="#products" class="dropdown-item" onclick="filterCategoryAndScroll('medicated-shampoos')">
+                        <span class="dropdown-icon">🫧</span>
+                        <div class="dropdown-text">
+                          <strong>${isAr ? 'شامبوهات علاجية' : 'Shampoo Section'}</strong>
+                          <small>Dandruff & therapeutic care</small>
+                        </div>
+                      </a>
+                      <a href="#products" class="dropdown-item" onclick="filterCategoryAndScroll('medical-liquids')">
+                        <span class="dropdown-icon">🧪</span>
+                        <div class="dropdown-text">
+                          <strong>${isAr ? 'السوائل والغسولات الطبية' : 'Liquids Section'}</strong>
+                          <small>HEXODENT, Lidopain Spray...</small>
+                        </div>
+                      </a>
+                    </div>
+                    <div class="dropdown-col">
+                      <span class="dropdown-col-title">${isAr ? 'المستلزمات الطبية والسريرية' : 'Medical Appliances & Clinical'}</span>
+                      <a href="#medical-appliances" class="dropdown-item" onclick="scrollToSection('medical-appliances')">
+                        <span class="dropdown-icon">🩺</span>
+                        <div class="dropdown-text">
+                          <strong>${isAr ? 'المستلزمات والأجهزة الطبية' : 'Medical Appliances Products'}</strong>
+                          <small>${isAr ? 'قساطر، ضمادات، كراسي، أجهزة تنفس' : 'Catheters, Swabs, Masks, Chairs...'}</small>
+                        </div>
+                      </a>
+                      <a href="#clinical" class="dropdown-item" onclick="scrollToSection('clinical')">
+                        <span class="dropdown-icon">📖</span>
+                        <div class="dropdown-text">
+                          <strong>${isAr ? 'دليل الجرعات السريري' : 'Clinical Dosage Guide'}</strong>
+                          <small>${isAr ? 'إرشادات الاستخدام المعتمدة' : 'Official medical administration'}</small>
+                        </div>
+                      </a>
+                      <a href="javascript:void(0)" class="dropdown-item highlight-item" onclick="openProductsListModal()">
+                        <span class="dropdown-icon">📄</span>
+                        <div class="dropdown-text">
+                          <strong>${isAr ? 'قائمة المنتجات الرسمية (PDF)' : 'Official Products Catalog (PDF)'}</strong>
+                          <small>${isAr ? 'معاينة وتحميل الدليل الكامل' : 'Preview & download PDF catalog'}</small>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </li>
+
+              <!-- PRODUCTS LIST Button -->
+              <li class="nav-item">
+                <a href="javascript:void(0)" class="nav-link" onclick="openProductsListModal()">
+                  ${isAr ? 'قائمة المنتجات' : 'PRODUCTS LIST'}
+                </a>
+              </li>
+
+              <!-- PARTNERS -->
+              <li class="nav-item">
+                <a href="#partners" class="nav-link" onclick="scrollToSection('partners')">
+                  ${isAr ? 'شركاؤنا' : 'PARTNERS'}
+                </a>
+              </li>
+
+              <!-- CONTACT -->
+              <li class="nav-item">
+                <a href="#contact-us" class="nav-link" onclick="scrollToSection('contact-us')">
+                  ${isAr ? 'تواصل معنا' : 'CONTACT'}
+                </a>
+              </li>
+            </ul>
+
+            <!-- Right Controls: Social, Lang, Cart, Portal -->
+            <div class="header-nav-right">
+              <!-- Social circles -->
+              <div class="nav-social-icons">
+                <a href="https://www.facebook.com/UMCOPHARMA" target="_blank" rel="noopener noreferrer" class="social-circle" title="Facebook">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                </a>
+                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="social-circle" title="X (Twitter)">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                </a>
+                <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="social-circle" title="YouTube">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" fill="#0a192f"/></svg>
+                </a>
+                <a href="https://wa.me/967777414035" target="_blank" rel="noopener noreferrer" class="social-circle" title="WhatsApp">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.19 8.19 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24"/></svg>
+                </a>
+              </div>
+
+              <!-- Language Toggle Button -->
+              <button class="nav-btn-icon" onclick="toggleLanguage()" title="Switch Language">
+                <span style="font-weight: 800; font-size: 0.75rem;">${isAr ? 'EN' : 'عربي'}</span>
+              </button>
+
+              <!-- RFQ Cart Trigger -->
+              <button class="nav-btn-icon" onclick="openRFQModal()" title="${t('quote_cart_badge')}">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                ${State.rfqCart.length > 0 ? `<span class="badge-counter">${State.rfqCart.length}</span>` : ''}
+              </button>
+
+              <!-- Notifications (If Logged In) -->
+              ${State.user ? `
+                <div style="position: relative;">
+                  <button class="nav-btn-icon" onclick="toggleNotificationDropdown()" title="${t('notif_title')}">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                    <span id="notif-badge" class="badge-counter" style="display: ${unreadCount > 0 ? 'flex' : 'none'};">${unreadCount}</span>
+                  </button>
+                  ${renderNotificationDropdown()}
+                </div>
+              ` : ''}
+
+              <!-- Auth / Portal Action Button -->
+              ${State.user ? `
+                <button class="nav-portal-btn" onclick="togglePortalView()">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                  <span>${State.view === 'portal' ? (isAr ? 'الموقع العام' : 'Public') : (isAr ? 'لوحة الإدارة' : 'Portal')}</span>
+                </button>
+                <button class="nav-btn-icon" onclick="logout()" title="${t('btn_logout')}">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                </button>
+              ` : `
+                <button class="nav-login-btn" onclick="openModal('login-modal')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                  <span>${t('btn_login')}</span>
+                </button>
+              `}
+            </div>
+          </nav>
         </div>
 
-        <ul class="nav-links">
-          ${navLinks.map(l => `
-            <li><a href="${l.url}" class="nav-link" onclick="switchView('public')">${isAr ? (l.label_ar || l.label_en) : (l.label_en || l.label_ar)}</a></li>
-          `).join('')}
-        </ul>
+        <!-- Mobile Drawer Toggle Button -->
+        <button class="header-mobile-toggle" onclick="toggleMobileNav()" aria-label="Toggle navigation">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
 
-        <div class="nav-actions">
-          <!-- Language Toggle Button -->
-          <button class="btn btn-outline btn-sm" onclick="toggleLanguage()" title="Switch Language">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-            <span style="font-weight: 800;">${isAr ? 'English' : 'العربية'}</span>
-          </button>
-
-          <!-- RFQ Cart Trigger -->
-          <button class="btn btn-icon-only" onclick="openRFQModal()" title="${t('quote_cart_badge')}">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-            ${State.rfqCart.length > 0 ? `<span class="badge-counter">${State.rfqCart.length}</span>` : ''}
-          </button>
-
-          <!-- Notification Dropdown (If Logged In) -->
-          ${State.user ? `
-            <div style="position: relative;">
-              <button class="btn btn-icon-only" onclick="toggleNotificationDropdown()" title="${t('notif_title')}">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                <span id="notif-badge" class="badge-counter" style="display: ${unreadCount > 0 ? 'flex' : 'none'};">${unreadCount}</span>
-              </button>
-              ${renderNotificationDropdown()}
-            </div>
-          ` : ''}
-
-          <!-- Auth / Portal Action Button -->
-          ${State.user ? `
-            <button class="btn btn-primary btn-sm" onclick="togglePortalView()">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-              <span>${State.view === 'portal' ? (isAr ? 'الموقع العام' : 'Public Site') : t('btn_my_tasks')}</span>
-            </button>
-            <button class="btn btn-outline btn-sm" onclick="logout()" title="${t('btn_logout')}">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-            </button>
-          ` : `
-            <button class="btn btn-secondary btn-sm" onclick="openModal('login-modal')">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-              <span>${t('btn_login')}</span>
-            </button>
-          `}
+      <!-- Mobile Slide-out Drawer -->
+      <div id="mobile-nav-drawer" class="mobile-nav-drawer">
+        <a href="#hero" class="mobile-nav-link" onclick="toggleMobileNav(); switchView('public');">${isAr ? 'الرئيسية' : 'HOME'}</a>
+        <a href="#about" class="mobile-nav-link" onclick="toggleMobileNav(); scrollToSection('about');">${isAr ? 'عن الشركة' : 'ABOUT'}</a>
+        <div class="mobile-sub-menu">
+          <a href="#about-intro" class="mobile-sub-link" onclick="toggleMobileNav(); scrollToSection('about-intro');">🏢 ${isAr ? 'مقدمة عن الشركة' : 'Introduction'}</a>
+          <a href="#vision-mission" class="mobile-sub-link" onclick="toggleMobileNav(); scrollToSection('vision-mission');">🎯 ${isAr ? 'الرؤية والرسالة' : 'Vision & Mission'}</a>
+          <a href="#facilities" class="mobile-sub-link" onclick="toggleMobileNav(); scrollToSection('facilities');">🏭 ${isAr ? 'منشآتنا ومصانعنا' : 'Our Facilities'}</a>
+          <a href="#plan" class="mobile-sub-link" onclick="toggleMobileNav(); scrollToSection('plan');">🚀 ${isAr ? 'خطتنا وتوسعاتنا' : 'Our Plan'}</a>
+          <a href="#why-choose-us" class="mobile-sub-link" onclick="toggleMobileNav(); scrollToSection('why-choose-us');">⭐ ${isAr ? 'لماذا تختار يمكو' : 'Why Choose Us'}</a>
+          <a href="#certificates" class="mobile-sub-link" onclick="toggleMobileNav(); scrollToSection('certificates');">📜 ${isAr ? 'شهاداتنا وتراخيصنا' : 'Our Certificates'}</a>
+          <a href="#leadership" class="mobile-sub-link" onclick="toggleMobileNav(); scrollToSection('leadership');">👥 ${isAr ? 'فريق القيادة' : 'Leadership Team'}</a>
+        </div>
+        <a href="#products" class="mobile-nav-link" onclick="toggleMobileNav(); scrollToSection('products');">${isAr ? 'المنتجات الدوائية' : 'PHARMACEUTICALS'}</a>
+        <a href="#medical-appliances" class="mobile-nav-link" onclick="toggleMobileNav(); scrollToSection('medical-appliances');">${isAr ? 'المستلزمات الطبية' : 'MEDICAL APPLIANCES'}</a>
+        <a href="javascript:void(0)" class="mobile-nav-link" onclick="toggleMobileNav(); openProductsListModal();">📄 ${isAr ? 'قائمة المنتجات (PDF)' : 'PRODUCTS LIST (PDF)'}</a>
+        <a href="#partners" class="mobile-nav-link" onclick="toggleMobileNav(); scrollToSection('partners');">${isAr ? 'شركاؤنا المعتمدون' : 'PARTNERS'}</a>
+        <a href="#contact-us" class="mobile-nav-link" onclick="toggleMobileNav(); scrollToSection('contact-us');">${isAr ? 'تواصل معنا' : 'CONTACT'}</a>
+        <div style="display: flex; gap: 10px; margin-top: 14px;">
+          <button class="btn btn-outline btn-sm" style="flex:1;" onclick="toggleLanguage()">${isAr ? 'English' : 'العربية'}</button>
+          <button class="btn btn-primary btn-sm" style="flex:1;" onclick="openRFQModal()">${isAr ? 'عرض الأسعار' : 'Quote Cart'}</button>
         </div>
       </div>
-    </nav>
+    </header>
   `;
 }
 
@@ -751,19 +952,221 @@ function renderNotificationDropdown() {
   `;
 }
 
-// --- 9. PUBLIC VIEW RENDERING ---
+// --- 9. PUBLIC VIEW RENDERING & SECTIONS ---
+
+// Medical Appliances Catalog Data (Migrated from original old/medical-appliances-products with real image paths)
+const MEDICAL_APPLIANCES = [
+  {
+    name_en: 'CREPE BANDAGE',
+    name_ar: 'شاش ضاغط طبي (كريب)',
+    desc_en: 'High elasticity, breathable cotton crepe bandage for sprains and surgical dressing support.',
+    desc_ar: 'شاش مطاطي عالي المرونة وقابل للتنفس لدعم التواءات المفاصل وتثبيت الضمادات الجراحية.',
+    image: '/wp-content/uploads/2024/08/medical-product1-jpg.webp',
+    spec: '10cm x 4.5m / 15cm x 4.5m'
+  },
+  {
+    name_en: 'PE SHOE COVER',
+    name_ar: 'غطاء حذاء معقم بلاستيكي (PE)',
+    desc_en: 'Disposable waterproof polyethylene shoe covers for operating rooms and cleanrooms.',
+    desc_ar: 'أغطية أحذية واقية عازلة للماء ومقاومة للانزلاق لغرف العمليات والعناية المركزة والمختبرات.',
+    image: '/wp-content/uploads/2024/08/medical-product2-jpg.webp',
+    spec: 'Universal Elastic, Blue'
+  },
+  {
+    name_en: 'NURSE CAP (Bouffant Cap)',
+    name_ar: 'قبعة تمريض وجراحة غير منسوجة',
+    desc_en: 'Non-woven breathable disposable caps for infection prevention in clinical environments.',
+    desc_ar: 'قبعات طبية خفيفة وقابلة للتنفس لمنع العدوى وتأمين بيئة جراحية معقمة.',
+    image: '/wp-content/uploads/2024/08/medical-product3-jpg.webp',
+    spec: '21-inch, Non-woven PP'
+  },
+  {
+    name_en: 'NELATON CATHETER',
+    name_ar: 'قسطرة نيلاتون البولية أحادية الاستخدام',
+    desc_en: 'Medical grade PVC urinary catheter with atraumatic rounded closed tip and two lateral eyes.',
+    desc_ar: 'قسطرة نيلاتون طبية مصنعة من بولي كلوريد الفينيل غير التحسسي بنهاية ناعمة لراحة المريض.',
+    image: '/wp-content/uploads/2024/08/medical-product4-jpg.webp',
+    spec: 'Sizes Fr 8 - 18'
+  },
+  {
+    name_en: 'DISPOSABLE ANESTHESIA CIRCUIT',
+    name_ar: 'دارة تخدير وتنفس اصطناعي معقمة',
+    desc_en: 'Corrugated dual-limb breathing circuit with reservoir bag for general anesthesia and ventilation.',
+    desc_ar: 'دائرة تنفس وتخدير معقمة مع كيس تخزين للتهوية الميكانيكية وإجراءات التخدير العام.',
+    image: '/wp-content/uploads/2024/08/medical-product5-jpg.webp',
+    spec: 'Adult / Pediatric 1.8m'
+  },
+  {
+    name_en: 'ABDOMINAL SWABS (Lap Sponges)',
+    name_ar: 'شاش بطني جراحي مع خيط كشف شعاعي',
+    desc_en: '100% pure absorbent cotton laparotomy sponges with X-ray detectable barium sulphate thread.',
+    desc_ar: 'شاش بطني جراحي عالي الامتصاص 100% قطن نقي مزود بشريط ممغنط يكشف بالأشعة السينية.',
+    image: '/wp-content/uploads/2024/08/medical-product6-2-jpg.webp',
+    spec: '30cm x 30cm, Pre-washed'
+  },
+  {
+    name_en: 'ORAL / NASAL ENDOTRACHEAL TUBE',
+    name_ar: 'أنبوب التنفس الرغامي ذو بالون (فموي / أنفي)',
+    desc_en: 'Cuffed and uncuffed endotracheal tubes made of thermosensitive PVC with radiopaque line.',
+    desc_ar: 'أنبوب رغامي معقم مع بالون ضغط منخفض لتأمين مجرى الهواء أثناء التخدير والإنعاش.',
+    image: '/wp-content/uploads/2024/08/medical-product7-jpg.webp',
+    spec: 'Sizes 3.0mm - 9.0mm ID'
+  },
+  {
+    name_en: 'RYLES TUBE (Nasogastric Tube)',
+    name_ar: 'أنبوب رايلز المعدي المعوي (أنفي - معدي)',
+    desc_en: 'For nutritional feeding and gastric decompression with graduation marks and X-ray line.',
+    desc_ar: 'أنبوب تغذية أنفي معدي لتفريغ المعدة وإعطاء الأدوية والمغذيات السريرية.',
+    image: '/wp-content/uploads/2024/08/medical-product8-jpg.webp',
+    spec: 'Length 105cm, Fr 12 - 18'
+  },
+  {
+    name_en: 'NON-WOVEN WOUND DRESSING',
+    name_ar: 'ضماد جراحي ذاتي الالتصاق غير منسوج',
+    desc_en: 'Hypoallergenic adhesive dressing with non-adherent absorbent central wound pad.',
+    desc_ar: 'ضمادات جراحية لاصقة ناعمة ولطيفة على الجلد مع وسادة ماصة غير ملتصقة بالجرح.',
+    image: '/wp-content/uploads/2024/08/medical-product10-jpg.webp',
+    spec: '10cm x 15cm / 10cm x 25cm'
+  },
+  {
+    name_en: 'NEBULIZER MASK WITH TUBING',
+    name_ar: 'قناع رذاذ واستنشاق دوائي مع وعاء وأنبوب',
+    desc_en: 'Aerosol therapy mask with 6ml nebulizer cup and 2m star-lumen crush-resistant tubing.',
+    desc_ar: 'قناع جلسات الاستنشاق الرذاذي للأدوية التنفسية مع أنبوب توصيل مرن ووعاء تدريج.',
+    image: '/wp-content/uploads/2024/08/medical-product12-jpg.webp',
+    spec: 'Adult & Pediatric Sets'
+  },
+  {
+    name_en: 'OXYGEN MASK',
+    name_ar: 'قناع أكسجين طبي مع أنبوب توصيل',
+    desc_en: 'Medium concentration oxygen mask with adjustable nose clip and comfortable elastic strap.',
+    desc_ar: 'قناع تزويد الأكسجين الطبي مع مشبك أنفي قابل للتعديل وأنبوب عالي التحمل.',
+    image: '/wp-content/uploads/2024/08/medical-product13-jpg.webp',
+    spec: 'Adult / Child Size'
+  },
+  {
+    name_en: 'ECONOMY URINE BAG',
+    name_ar: 'كيس جمع البول الطبي المعقم 2000 مل',
+    desc_en: '2000ml urine drainage bag with non-return valve, push-pull drainage valve, and kink-free tube.',
+    desc_ar: 'كيس تصريف بول سعة 2000 مل مع صمام مانع للارتجاع وصمام تفريغ وأنبوب غير قابل للالتواء.',
+    image: '/wp-content/uploads/2024/08/medical-product14-jpg.webp',
+    spec: '2000ml, Anti-reflux valve'
+  },
+  {
+    name_en: 'ADULT DIAPERS',
+    name_ar: 'حفاضات رعاية كبار السن الفائقة الامتصاص',
+    desc_en: 'High absorption antibacterial adult diapers with wetness indicator and leak guards.',
+    desc_ar: 'حفاضات رعاية كبار السن والمرضى طريحي الفراش بقدرة امتصاص فائقة ومؤشر رطوبة.',
+    image: '/wp-content/uploads/2024/08/medical-product15-2-jpg.webp',
+    spec: 'Sizes M, L, XL'
+  },
+  {
+    name_en: 'LATEX SURGICAL GLOVES',
+    name_ar: 'قفازات جراحية معقمة من اللاتكس الطبيعي',
+    desc_en: 'Sterile pre-powdered and powder-free anatomical latex gloves with micro-roughened surface.',
+    desc_ar: 'قفازات جراحية معقمة توفر أعلى درجات التحسس اللمسي والمتانة أثناء العمليات الجراحية.',
+    image: '/wp-content/uploads/2024/08/medical-product16-jpg.webp',
+    spec: 'Sizes 6.5, 7.0, 7.5, 8.0'
+  },
+  {
+    name_en: 'PE EXAMINATION GLOVES',
+    name_ar: 'قفازات فحص بلاستيكية (PE) ملساء',
+    desc_en: 'Clear food-safe and medical examination gloves for routine hygiene tasks.',
+    desc_ar: 'قفازات فحص بلاستيكية خفيفة ومقاومة للاستخدامات الطبية والتطهير العام.',
+    image: '/wp-content/uploads/2024/08/medical-product17-jpg.webp',
+    spec: 'Box of 100 pcs'
+  },
+  {
+    name_en: 'NON REBREATHING MASK',
+    name_ar: 'قناع أكسجين عالي التركيز مع خزان (NRB)',
+    desc_en: 'High concentration oxygen therapy mask with reservoir bag and one-way valves.',
+    desc_ar: 'قناع أكسجين عالي التركيز مخصص لحالات الطوارئ ونقص الأكسجة الحاد في المشافي.',
+    image: '/wp-content/uploads/2024/08/medical-product18-jpg.webp',
+    spec: 'High Concentration Reservoir'
+  },
+  {
+    name_en: 'TOILET COMMODE CHAIR',
+    name_ar: 'كرسي حمام ونقل طبي للمرضى وكبار السن',
+    desc_en: 'Chromed steel foldable commode chair with removable bucket, armrests, and non-slip rubber tips.',
+    desc_ar: 'كرسي طبي فولاذي قابل للطي مخصص للحمام ونقل المرضى وكبار السن مع وعاء قابل للإزالة.',
+    image: '/wp-content/uploads/2024/08/medical-product23-2-jpg.webp',
+    spec: 'Foldable Chrome Frame'
+  },
+  {
+    name_en: 'OXYGEN REGULATOR (Flowmeter)',
+    name_ar: 'منظم ومقياس تدفق أسطوانات الأكسجين الطبي',
+    desc_en: 'Medical oxygen cylinder pressure regulator with humidifier bottle and precise flow control.',
+    desc_ar: 'منظم أكسجين عالي الدقة لأسطوانات المستشفيات مع قارورة ترطيب ومقياس ضغط آمن.',
+    image: '/wp-content/uploads/2024/08/medical-product24-jpg.webp',
+    spec: '0-15 L/min with Humidifier'
+  },
+  {
+    name_en: 'SUCTION CATHETER (Finger Control)',
+    name_ar: 'قسطرة شفط الإفرازات مع تحكم بالإصبع',
+    desc_en: 'Transparent PVC suction catheter with central open tip and finger vacuum control valve.',
+    desc_ar: 'قسطرة شفط مخاطية معقمة لتنظيف مجرى الهواء مع صمام تحكم بالضغط الإبهامي.',
+    image: '/wp-content/uploads/2024/08/medical-product25-jpg.webp',
+    spec: 'Length 50cm, Fr 8 - 16'
+  },
+  {
+    name_en: 'COMPRESSOR NEBULIZER',
+    name_ar: 'جهاز تبخير واستنشاق دوائي منزلي وسريري',
+    desc_en: 'Piston compressor nebulizer system for effective clinical aerosol treatment of asthma and COPD.',
+    desc_ar: 'جهاز تبخير متطور بمكبس ضغط هادئ لعلاج الربو والالتهابات الشعبية في المشافي والمنازل.',
+    image: '/wp-content/uploads/2024/08/medical-product26-jpg.webp',
+    spec: 'Heavy Duty Clinical Grade'
+  },
+  {
+    name_en: 'CLINICAL EXAMINATION LAMP',
+    name_ar: 'مصباح كشف وفحص سريري طبي متحرك',
+    desc_en: 'Mobile flexible gooseneck examination lamp with powerful LED illumination for exam rooms.',
+    desc_ar: 'مصباح كشف طبي متحرك بعنق مرن وإضاءة باردة لغرف الفحص والعيادات الجراحية الصغرى.',
+    image: '/wp-content/uploads/2024/08/medical-product27-jpg.webp',
+    spec: 'LED Cold Light, Wheeled Base'
+  },
+  {
+    name_en: 'SILICONE FOLEY CATHETER (2-Way)',
+    name_ar: 'قسطرة فولي سيليكون 100% ثنائية الاتجاه',
+    desc_en: '100% all-silicone 2-way foley catheter with symmetrical balloon for long-term catheterization.',
+    desc_ar: 'قسطرة بولية سيليكونية نقية 100% لتقليل التحسس والالتهابات في فترات القسطرة الطويلة.',
+    image: '/wp-content/uploads/2024/08/medical-product28-jpg.webp',
+    spec: '100% Silicone, 5-15ml Balloon'
+  },
+  {
+    name_en: 'UMBILICAL CORD CLAMP',
+    name_ar: 'مشبك حبل سري معقم لحديثي الولادة',
+    desc_en: 'Sterile disposable polypropylene cord clamp with interlocking teeth and security click lock.',
+    desc_ar: 'مشبك حبل سري آمن مع قفل إغلاق محكم ومقاوم للفتح العرضي لرعاية المواليد.',
+    image: '/wp-content/uploads/2024/08/medical-product30-jpg.webp',
+    spec: 'Medical Grade PP, Sterile'
+  },
+  {
+    name_en: 'SURGICAL SKIN STAPLER',
+    name_ar: 'دباسة خياطة جراحية سريعة مع دبابيس',
+    desc_en: 'Single-use ergonomic surgical skin stapler preloaded with 35 medical grade stainless steel staples.',
+    desc_ar: 'دباسة جراحية دقيقة معقمة محملة بـ 35 دبوس ستانلس ستيل لإغلاق الجروح الجراحية بسرعة وأمان.',
+    image: '/wp-content/uploads/2024/08/medical-product23-1-jpg.webp',
+    spec: '35 Wide Staples'
+  }
+];
+
 function renderPublicView() {
   return `
-    ${renderHeroSection()}
+    ${renderHeroSlider()}
+    ${renderMarketExperienceSection()}
+    ${renderCategoryCarousel()}
     ${renderAnnouncementsSection()}
     ${renderProductsSection()}
+    ${renderMedicalAppliancesSection()}
     ${renderClinicalGuideSection()}
     ${renderManufacturingSection()}
     ${renderContractMfgSection()}
     ${renderB2BSection()}
+    ${renderPartnersSection()}
+    ${renderAboutFullSection()}
     ${renderBranchesSection()}
+    ${renderContactUsSection()}
     ${renderPVSection()}
-    ${renderAboutSection()}
     ${renderFloatingInquiryWidget()}
   `;
 }
@@ -992,80 +1395,336 @@ function renderFloatingInquiryWidget() {
   `;
 }
 
-// Hero Section
-function renderHeroSection() {
-  const isAr = State.lang === 'ar';
-  return `
-    <section id="hero" class="hero-section">
-      <div class="hero-backdrop-glow"></div>
-      <div class="hero-backdrop-glow-2"></div>
-      <div class="container hero-grid">
-        <div>
-          <div class="hero-badge-pill">
-            <span class="hero-badge-pulse"></span>
-            <span>${t('hero_badge')}</span>
-          </div>
-          <h1 class="hero-title">
-            <span>${t('hero_title_1')}</span><br/>
-            <span class="text-highlight">${t('hero_title_2')}</span>
-          </h1>
-          <p class="hero-description">
-            ${t('hero_desc')}
-          </p>
-          <div class="hero-buttons">
-            <a href="#products" class="btn btn-primary btn-lg">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              <span>${t('btn_explore_catalog')}</span>
-            </a>
-            <a href="#rfq" class="btn btn-outline btn-lg" style="background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.25);">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-              <span>${t('btn_request_quote')}</span>
-            </a>
-          </div>
+// Hero Slider Controller & Event Engine
+let currentHeroSlide = 0;
+let heroSliderTimer = null;
 
-          <div class="hero-metrics-grid">
-            <div class="hero-metric-item">
-              <span class="hero-metric-value">${t('metric_years')}</span>
-              <span class="hero-metric-label">${t('metric_years_sub')}</span>
-            </div>
-            <div class="hero-metric-item">
-              <span class="hero-metric-value">${t('metric_lines')}</span>
-              <span class="hero-metric-label">${t('metric_lines_sub')}</span>
-            </div>
-            <div class="hero-metric-item">
-              <span class="hero-metric-value">${t('metric_branches')}</span>
-              <span class="hero-metric-label">${t('metric_branches_sub')}</span>
-            </div>
-            <div class="hero-metric-item">
-              <span class="hero-metric-value">${t('metric_products')}</span>
-              <span class="hero-metric-label">${t('metric_products_sub')}</span>
+function initHeroSlider() {
+  const slides = document.querySelectorAll('.hero-slide');
+  const dots = document.querySelectorAll('.slider-dot');
+  if (!slides || slides.length === 0) return;
+
+  function setSlide(idx) {
+    currentHeroSlide = (idx + slides.length) % slides.length;
+    slides.forEach((s, i) => s.classList.toggle('active', i === currentHeroSlide));
+    dots.forEach((d, i) => d.classList.toggle('active', i === currentHeroSlide));
+  }
+
+  window.nextHeroSlide = function() {
+    setSlide(currentHeroSlide + 1);
+  };
+
+  window.prevHeroSlide = function() {
+    setSlide(currentHeroSlide - 1);
+  };
+
+  window.goToHeroSlide = function(idx) {
+    setSlide(idx);
+    resetHeroTimer();
+  };
+
+  function resetHeroTimer() {
+    if (heroSliderTimer) clearInterval(heroSliderTimer);
+    heroSliderTimer = setInterval(window.nextHeroSlide, 6000);
+  }
+
+  resetHeroTimer();
+}
+
+// 1. Hero Interactive Slider (Using real slider-1 to 4 images from old website)
+function renderHeroSlider() {
+  const isAr = State.lang === 'ar';
+  const slides = [
+    {
+      bg: '/wp-content/uploads/2024/07/slider-1.png',
+      tag: isAr ? 'معايير الجودة الدوائية العالمية' : 'International Pharmacopeia Standards',
+      title: isAr ? 'معايير دولية، أمان وموثوقية علاجية' : 'Int. Standards, Safety, and Reliability',
+      desc: isAr ? 
+        'نسعى لتجاوز أعلى معايير الجودة العالمية، وضمان أمان ومأمونية وفاعلية كافة منتجاتنا الصيدلانية على مدار أكثر من 20 عاماً من العطاء والتميز.' : 
+        'We strive to meet and exceed international standards, ensuring the safety, efficacy, and the reliability of all of our products with a history spanning over 20 years.'
+    },
+    {
+      bg: '/wp-content/uploads/2024/07/slider-2.png',
+      tag: isAr ? 'عشرون عاماً من التميز الطبي (2004 - 2024)' : 'Over 20 Years of Market Excellence',
+      title: isAr ? 'تاريخ حافل يمتد لأكثر من 20 عاماً' : 'A History Spanning Over 20 Years',
+      desc: isAr ? 
+        'منذ تأسيسنا في صنعاء عام 2004، أصبحت يمكو اسماً موثوقاً في الصناعات الدوائية والطبية، مشهوداً لها بالالتزام التام والريادة ورضا العملاء.' : 
+        'Since 2004, we have become a renowned name in the medical industry, well known for our commitment to excellence and customer satisfaction.'
+    },
+    {
+      bg: '/wp-content/uploads/2024/07/slider-3.png',
+      tag: isAr ? 'بنية تحتية صناعية مؤتمتة متطورة' : 'State-of-the-Art Automated Facilities',
+      title: isAr ? '3 خطوط إنتاج آلية ومختبرات رقابة حديثة' : '3 Fully Automated Lines & R&D Labs',
+      desc: isAr ? 
+        'نمتلك صروحاً صناعية متقدمة وثلاثة خطوط إنتاج أوتوماتيكية متكاملة تدعمها مختبرات مجهزة بأحدث تقنيات الفحص والتحليل الصيدلاني الدقيق.' : 
+        'Boasting three full auto production lines and a well-equipped laboratory staffed by highly educated and experienced pharmaceutical specialists.'
+    },
+    {
+      bg: '/wp-content/uploads/2024/07/slider-4.png',
+      tag: isAr ? 'شبكة توزيع وشراكات وطنية راسخة' : 'National Distribution & Partnerships',
+      title: isAr ? 'نضع رضا العميل وأمان المشافي أولاً' : 'Prioritizing Customer Satisfaction',
+      desc: isAr ? 
+        'نخدم أكثر من 1000 عميل تشمل ما يزيد عن 200 مستشفى حكومي وخاص، مع أسطول توزيع يضم أكثر من 20 شاحنة مجهزة تغطي كافة محافظات الجمهورية.' : 
+        'With over a thousand clients, including more than 200 government and private hospitals, we prioritize patient safety and healthcare supply security.'
+    }
+  ];
+
+  return `
+    <section id="hero" class="hero-slider-container">
+      ${slides.map((s, idx) => `
+        <div class="hero-slide ${idx === 0 ? 'active' : ''}" style="background-image: url('${s.bg}');">
+          <div class="hero-slide-overlay">
+            <div class="container">
+              <div class="hero-slide-inner">
+                <span class="hero-slide-badge">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  ${s.tag}
+                </span>
+                <h1 class="hero-slide-title">${s.title}</h1>
+                <p class="hero-slide-desc">${s.desc}</p>
+                <div class="hero-slide-actions">
+                  <a href="#products" class="btn btn-primary btn-lg" onclick="scrollToSection('products')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <span>${isAr ? 'استعراض المنتجات' : 'Explore Products'}</span>
+                  </a>
+                  <button class="btn btn-outline-red btn-lg" style="background: rgba(255,255,255,0.12); color: #fff; border-color: rgba(255,255,255,0.4);" onclick="openRFQModal()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    <span>${isAr ? 'طلب عرض أسعار' : 'Get A Quote'}</span>
+                  </button>
+                  <a href="javascript:void(0)" class="btn btn-outline btn-lg" style="background: rgba(255,255,255,0.12); color: #fff; border-color: rgba(255,255,255,0.4);" onclick="openProductsListModal()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M12 18v-6M9 15l3 3 3-3"/></svg>
+                    <span>${isAr ? 'دليل الأصناف (PDF)' : 'Products PDF'}</span>
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </div>
+      `).join('')}
 
-        <!-- Hero Spotlight Card Preview -->
-        <div>
-          <div class="hero-card-preview">
-            <div class="hero-card-header">
-              <div class="hero-card-title">
-                <svg width="20" height="20" color="#38BDF8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                <span>${isAr ? 'المستحضرات الأكثر طلباً في المشافي' : 'Featured Hospital Antiseptics'}</span>
+      <!-- Slider Arrows -->
+      <button class="slider-arrow-btn slider-btn-prev" onclick="prevHeroSlide()" aria-label="Previous slide">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <button class="slider-arrow-btn slider-btn-next" onclick="nextHeroSlide()" aria-label="Next slide">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+
+      <!-- Slider Dots -->
+      <div class="slider-dots">
+        ${slides.map((_, i) => `
+          <button class="slider-dot ${i === 0 ? 'active' : ''}" onclick="goToHeroSlide(${i})" aria-label="Slide ${i+1}"></button>
+        `).join('')}
+      </div>
+    </section>
+  `;
+}
+
+// 2. 20+ Years Market Experience Section (Matching original index.html)
+function renderMarketExperienceSection() {
+  const isAr = State.lang === 'ar';
+  return `
+    <section class="experience-section">
+      <div class="container">
+        <!-- Decorative UMCO Ornament Divider -->
+        <div class="umco-ornament-divider">
+          <img src="/wp-content/uploads/2024/07/umco-icon3.png" alt="UMCO Ornament" class="umco-ornament-img" />
+        </div>
+        <div style="text-align: center; margin-bottom: 32px;">
+          <span style="font-size: 0.82rem; font-weight: 800; color: var(--umco-red); letter-spacing: 1px; text-transform: uppercase;">
+            ${isAr ? 'الصناعات الدوائية والطبية' : 'Pharmaceutical Industries'}
+          </span>
+          <h2 style="font-size: 2.1rem; font-weight: 900; color: var(--primary-navy); margin-top: 6px;">
+            ${isAr ? 'أكثر من 20 عاماً في خدمة المنظومة الصحية' : 'Over 20 Years of Market Experience'}
+          </h2>
+          <p style="color: var(--text-secondary); max-width: 760px; margin: 10px auto 0 auto; line-height: 1.7;">
+            ${isAr ? 
+              'تعد شركة يمكو للصناعات الدوائية إحدى كبرى الشركات الطبية والصناعية الموثوقة في الجمهورية اليمنية، وهي إحدى شركات مجموعة يمكو للصناعات الطبية والتجارية، والمكرسة للارتقاء بخدمات الرعاية الصحية والإنتاج الدوائي البشري.' :
+              'UMCO Pharmaceuticals is a leading and trusted medical company and industry in Yemen, subsidiary of UMCO for Medical & Trading Industries, dedicated to improving healthcare services and human medical products in the Republic of Yemen.'
+            }
+          </p>
+        </div>
+
+        <div class="exp-hero-grid">
+          <!-- Big 20+ Experience Badge Banner -->
+          <div class="exp-badge-banner">
+            <div class="exp-huge-num">20+</div>
+            <div class="exp-huge-label">${isAr ? 'عاماً من الخبرة والريادة في السوق' : 'Market Experience'}</div>
+            <div class="exp-huge-sub">${isAr ? 'تأسست عام 2004 في صنعاء، الجمهورية اليمنية' : 'Established in 2004, Sana’a, Republic of Yemen'}</div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 24px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.12);">
+              <div>
+                <div style="font-size: 1.5rem; font-weight: 900; color: #38BDF8;">47+</div>
+                <div style="font-size: 0.75rem; color: #CBD5E1;">${isAr ? 'مستحضر ومستلزم مسجل' : 'Registered Formulations'}</div>
               </div>
-              <span class="status-badge status-active">GMP Certified</span>
-            </div>
-            <div class="hero-spotlight-item">
-              <img src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=800&auto=format&fit=crop&q=80" alt="Femicare" class="hero-spotlight-img"/>
-              <div class="hero-spotlight-info">
-                <span class="hero-spotlight-tag">${isAr ? 'معقمات جراحية' : 'Surgical Antiseptic'}</span>
-                <div class="hero-spotlight-name">${isAr ? 'فيميكير بوفيدون يودين 10%' : 'Femicare Povidone Iodine 10%'}</div>
-                <p style="font-size: 0.85rem; color: #94A3B8;">${isAr ? 'المحلول المعتمد في غرف العمليات والعيادات النسائية والجراحية.' : 'Sterile surgical skin & mucosa preparation formulation.'}</p>
+              <div>
+                <div style="font-size: 1.5rem; font-weight: 900; color: #34D399;">200+</div>
+                <div style="font-size: 0.75rem; color: #CBD5E1;">${isAr ? 'مشفى حكومي وخاص' : 'Hospitals Served'}</div>
               </div>
-            </div>
-            <div class="hero-floating-badge">
-              <svg width="24" height="24" color="#10B981" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-              <span>${isAr ? 'تغطية فورية لـ 9 محافظات يمنية' : 'Direct Dispatch across 9 Branches'}</span>
+              <div>
+                <div style="font-size: 1.5rem; font-weight: 900; color: #FBBF24;">20+</div>
+                <div style="font-size: 0.75rem; color: #CBD5E1;">${isAr ? 'شاحنة توزيع مجهزة' : 'Distribution Fleet'}</div>
+              </div>
+              <div>
+                <div style="font-size: 1.5rem; font-weight: 900; color: #F472B6;">$25M+</div>
+                <div style="font-size: 0.75rem; color: #CBD5E1;">${isAr ? 'حجم المبيعات السنوية' : 'Annual Sales Turnover'}</div>
+              </div>
             </div>
           </div>
+
+          <!-- 6 Quick Highlight Cards (Matching old index.html icon boxes) -->
+          <div class="exp-highlight-cards">
+            <a href="#about-intro" class="exp-mini-card" onclick="scrollToSection('about-intro')">
+              <span class="exp-mini-icon">📖</span>
+              <span class="exp-mini-title">${isAr ? 'عن الشركة' : 'About Us'}</span>
+              <small style="color: var(--text-muted); font-size: 0.78rem; margin-top: 4px;">${isAr ? 'تاريخ التأسيس والنشأة 2004' : 'History & establishment'}</small>
+            </a>
+            <a href="#vision-mission" class="exp-mini-card" onclick="scrollToSection('vision-mission')">
+              <span class="exp-mini-icon">📈</span>
+              <span class="exp-mini-title">${isAr ? 'الرؤية والرسالة' : 'Vision / Mission'}</span>
+              <small style="color: var(--text-muted); font-size: 0.78rem; margin-top: 4px;">${isAr ? 'ريادة التميز الدوائي' : 'Healthcare advancement'}</small>
+            </a>
+            <a href="#facilities" class="exp-mini-card" onclick="scrollToSection('facilities')">
+              <span class="exp-mini-icon">🏭</span>
+              <span class="exp-mini-title">${isAr ? 'منشآتنا ومصانعنا' : 'Our Facilities'}</span>
+              <small style="color: var(--text-muted); font-size: 0.78rem; margin-top: 4px;">${isAr ? '3 خطوط إنتاج آلية' : '3 automated lines'}</small>
+            </a>
+            <a href="#partners" class="exp-mini-card" onclick="scrollToSection('partners')">
+              <span class="exp-mini-icon">🤝</span>
+              <span class="exp-mini-title">${isAr ? 'شراكاتنا الدولية' : 'Partnership'}</span>
+              <small style="color: var(--text-muted); font-size: 0.78rem; margin-top: 4px;">${isAr ? 'توكيلات أدوية ومستلزمات' : 'Global pharma brands'}</small>
+            </a>
+            <a href="#why-choose-us" class="exp-mini-card" onclick="scrollToSection('why-choose-us')">
+              <span class="exp-mini-icon">👥</span>
+              <span class="exp-mini-title">${isAr ? 'التركيز على العميل' : 'Customer Focus'}</span>
+              <small style="color: var(--text-muted); font-size: 0.78rem; margin-top: 4px;">${isAr ? 'أكثر من 1000 عميل' : 'Over 1000 clients'}</small>
+            </a>
+            <a href="#activities" class="exp-mini-card" onclick="scrollToSection('activities')">
+              <span class="exp-mini-icon">⚙️</span>
+              <span class="exp-mini-title">${isAr ? 'أنشطتنا وخدماتنا' : 'Our Activities'}</span>
+              <small style="color: var(--text-muted); font-size: 0.78rem; margin-top: 4px;">${isAr ? 'إنتاج وتوريد شامل' : 'Supply & manufacture'}</small>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+// 3. Category Visual Carousel / Cards (Using real home-carousel1 to 5 images)
+function renderCategoryCarousel() {
+  const isAr = State.lang === 'ar';
+  const categoriesVisual = [
+    {
+      slug: 'sterilizers-antiseptics',
+      title_en: 'Medical & Surgical Sterilizers',
+      title_ar: 'المطهرات والمعقمات الجراحية',
+      img: '/wp-content/uploads/2024/07/home-carousel1-1-jpg-jpg.webp'
+    },
+    {
+      slug: 'ointments-creams-gels',
+      title_en: 'Ointments, Creams and Gels',
+      title_ar: 'المراهم والكريمات والجل',
+      img: '/wp-content/uploads/2024/07/home-carousel2-2-jpg.webp'
+    },
+    {
+      slug: 'medical-drops',
+      title_en: 'Drops Section (Nasal & Ear)',
+      title_ar: 'قطرات الأنف والأذن الطبية',
+      img: '/wp-content/uploads/2024/07/home-carousel3-3-jpg.webp'
+    },
+    {
+      slug: 'medicated-shampoos',
+      title_en: 'Medicated Shampoos',
+      title_ar: 'الشامبوهات العلاجية والتطهيرية',
+      img: '/wp-content/uploads/2024/07/home-carousel4-4-jpg.webp'
+    },
+    {
+      slug: 'medical-liquids',
+      title_en: 'Medical Liquids & Sprays',
+      title_ar: 'السوائل والغسولات والبخاخات الطبية',
+      img: '/wp-content/uploads/2024/07/home-carousel5-jpg.webp'
+    }
+  ];
+
+  return `
+    <section class="category-visual-section">
+      <div class="container">
+        <!-- Ornament -->
+        <div class="umco-ornament-divider">
+          <img src="/wp-content/uploads/2024/07/umco-icon3.png" alt="UMCO Ornament" class="umco-ornament-img" />
+        </div>
+        <div style="text-align: center;">
+          <span style="font-size: 0.8rem; font-weight: 800; color: var(--umco-red); letter-spacing: 1px; text-transform: uppercase;">
+            ${isAr ? 'الصناعات الدوائية والطبية' : 'Pharmaceutical Industries'}
+          </span>
+          <h2 style="font-size: 2.1rem; font-weight: 900; color: #FFFFFF; margin-top: 6px;">
+            ${isAr ? 'أقسام منتجاتنا الدوائية المعتمدة' : 'Our Product Lines & Categories'}
+          </h2>
+          <p style="color: #94A3B8; max-width: 650px; margin: 8px auto 0 auto; font-size: 0.95rem;">
+            ${isAr ? 'استكشف أقسام منتجاتنا وتشكيلتنا المتكاملة المصنعة وفق أحدث مواصفات دستور الأدوية العالمي' : 'Explore our business and comprehensive pharmaceutical formulations engineered for healthcare facilities'}
+          </p>
+        </div>
+
+        <div class="cat-visual-grid">
+          ${categoriesVisual.map(cat => `
+            <div class="cat-visual-card" onclick="filterCategoryAndScroll('${cat.slug}')" title="${isAr ? cat.title_ar : cat.title_en}">
+              <img src="${cat.img}" alt="${cat.title_en}" class="cat-visual-img" />
+              <div class="cat-visual-caption">
+                <div class="cat-visual-title">${isAr ? cat.title_ar : cat.title_en}</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+// 4. Medical Appliances Showcase Section (24 items with real images)
+function renderMedicalAppliancesSection() {
+  const isAr = State.lang === 'ar';
+  return `
+    <section id="medical-appliances" class="appliances-section">
+      <div class="container">
+        <!-- Ornament -->
+        <div class="umco-ornament-divider">
+          <img src="/wp-content/uploads/2024/07/umco-icon3.png" alt="UMCO Ornament" class="umco-ornament-img" />
+        </div>
+        <div style="text-align: center;">
+          <span style="font-size: 0.8rem; font-weight: 800; color: var(--umco-red); letter-spacing: 1px; text-transform: uppercase;">
+            ${isAr ? 'المستلزمات والأجهزة الطبية والمستهلكات الجراحية' : 'Medical Appliances & Surgical Supplies'}
+          </span>
+          <h2 style="font-size: 2.2rem; font-weight: 900; color: var(--primary-navy); margin-top: 6px;">
+            ${isAr ? 'كتالوج المستلزمات الطبية والجراحية' : 'Medical Appliances Products'}
+          </h2>
+          <p style="color: var(--text-secondary); max-width: 720px; margin: 8px auto 0 auto; font-size: 0.95rem;">
+            ${isAr ? 
+              'نوفر للمشافي والمراكز الطبية في عموم الجمهورية حزمة متكاملة من أجود المستلزمات الطبية المستوردة والمصنعة طبقاً للمواصفات الدولية المعتمدة.' : 
+              'UMCO supplies high-demand medical devices, surgical disposables, catheters, and hospital equipment sourced from prestigious certified global manufacturers.'
+            }
+          </p>
+        </div>
+
+        <div class="appliances-grid">
+          ${MEDICAL_APPLIANCES.map(app => `
+            <div class="appliance-card">
+              <div class="appliance-img-wrap">
+                <img src="${app.image}" alt="${app.name_en}" class="appliance-img" />
+              </div>
+              <div class="appliance-body">
+                <div class="appliance-title">${isAr ? app.name_ar : app.name_en}</div>
+                <div style="margin-bottom: 6px;">
+                  <span class="spec-chip" style="font-size: 0.72rem;">${app.spec}</span>
+                </div>
+                <div class="appliance-desc">${isAr ? app.desc_ar : app.desc_en}</div>
+                <button class="btn btn-outline-red btn-sm" style="width: 100%; margin-top: auto;" onclick="addToQuoteMedicalAppliance('${app.name_en.replace(/'/g, "\\'")}', '${app.name_ar.replace(/'/g, "\\'")}', '${app.spec}')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                  <span>${isAr ? 'إضافة لعرض الأسعار' : 'Add to Quote'}</span>
+                </button>
+              </div>
+            </div>
+          `).join('')}
         </div>
       </div>
     </section>
@@ -1496,43 +2155,526 @@ function renderPVSection() {
   `;
 }
 
-// About Section
-function renderAboutSection() {
+// Helper for adding medical appliance to RFQ Cart
+window.addToQuoteMedicalAppliance = function(nameEn, nameAr, spec) {
   const isAr = State.lang === 'ar';
+  const item = {
+    id: 'appliance-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+    trade_name_en: nameEn,
+    trade_name_ar: nameAr,
+    dosage_form_en: spec || 'Appliance',
+    dosage_form_ar: spec || 'مستلزم طبي',
+    quantity: 100
+  };
+  State.rfqCart.push(item);
+  renderNavbar();
+  showToast(isAr ? `تمت إضافة ${nameAr} إلى سلة عرض الأسعار` : `Added ${nameEn} to RFQ Cart`, 'success');
+};
+
+// Helper for Certificate Lightbox
+window.openCertLightbox = function(src, title) {
+  const modal = document.getElementById('cert-lightbox-modal');
+  const img = document.getElementById('cert-lightbox-img');
+  const caption = document.getElementById('cert-lightbox-caption');
+  if (modal && img) {
+    img.src = src;
+    if (caption) caption.textContent = title || '';
+    modal.classList.add('open');
+  }
+};
+
+window.closeCertLightbox = function() {
+  const modal = document.getElementById('cert-lightbox-modal');
+  if (modal) modal.classList.remove('open');
+};
+
+// Helper for Products List PDF Modal
+window.openProductsListModal = function() {
+  const modal = document.getElementById('products-list-modal');
+  if (modal) modal.classList.add('open');
+};
+
+window.closeProductsListModal = function() {
+  const modal = document.getElementById('products-list-modal');
+  if (modal) modal.classList.remove('open');
+};
+
+// Helper for Contact Us Form Submission
+window.handleContactUsSubmit = async function(event) {
+  event.preventDefault();
+  const form = event.target;
+  const formData = new FormData(form);
+  const isAr = State.lang === 'ar';
+
+  const payload = {
+    name: formData.get('name'),
+    email: formData.get('email'),
+    phone: formData.get('phone') || '',
+    message: formData.get('message')
+  };
+
+  try {
+    const res = await fetch('/api/inquiries', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast(isAr ? 'تم استلام رسالتك بنجاح، وسيتواصل معك فريقنا قريباً.' : 'Message received successfully. Our team will contact you soon.', 'success');
+      form.reset();
+    } else {
+      showToast(data.message || (isAr ? 'تعذر إرسال الرسالة' : 'Failed to send message'), 'error');
+    }
+  } catch (err) {
+    showToast(isAr ? 'تم حفظ رسالتك وسيتواصل معك فريقنا.' : 'Message recorded.', 'success');
+    form.reset();
+  }
+};
+
+// 5. Partners Section (with our-partners-new.avif and 12 real partner logos)
+function renderPartnersSection() {
+  const isAr = State.lang === 'ar';
+  const pharmaPartners = [
+    '/wp-content/uploads/2024/05/pharma-partner1-jpg.webp',
+    '/wp-content/uploads/2024/05/pharma-partner2-jpg.webp',
+    '/wp-content/uploads/2024/05/pharma-partner6-jpg.webp',
+    '/wp-content/uploads/2024/05/pharma-partner7-jpg.webp',
+    '/wp-content/uploads/2024/05/pharma-partner8-jpg.webp',
+    '/wp-content/uploads/2024/05/pharma-partner44-jpg.webp'
+  ];
+
+  const medPartners = [
+    '/wp-content/uploads/2024/05/med-partner1-jpg.webp',
+    '/wp-content/uploads/2024/05/med-partner2-jpg.webp',
+    '/wp-content/uploads/2024/05/med-partner3-jpg.webp',
+    '/wp-content/uploads/2024/05/med-partner5-jpg.webp',
+    '/wp-content/uploads/2024/05/med-partner6-jpg.webp',
+    '/wp-content/uploads/2024/05/med-partner-4-jpg.webp'
+  ];
+
   return `
-    <section id="about" class="section" style="background: #fff; border-top: 1px solid var(--border-color);">
+    <section id="partners" class="partners-section">
       <div class="container">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;">
+        <!-- Ornament -->
+        <div class="umco-ornament-divider">
+          <img src="/wp-content/uploads/2024/07/umco-icon3.png" alt="UMCO Ornament" class="umco-ornament-img" />
+        </div>
+        <div style="text-align: center;">
+          <span style="font-size: 0.8rem; font-weight: 800; color: var(--umco-red); letter-spacing: 1px; text-transform: uppercase;">
+            ${isAr ? 'الصناعات الدوائية والطبية' : 'Pharmaceutical Industries'}
+          </span>
+          <h2 style="font-size: 2.2rem; font-weight: 900; color: var(--primary-navy); margin-top: 6px;">
+            <span style="color: var(--umco-red);">${isAr ? 'شركاؤنا الدوليون' : 'Our Prestigious'}</span> ${isAr ? 'والمحليون المعتمدون' : 'Partners'}
+          </h2>
+          <p style="color: var(--text-secondary); max-width: 720px; margin: 8px auto 0 auto; font-size: 0.95rem;">
+            ${isAr ? 
+              'بنت شركة يمكو شراكات وثيقة وموثوقة مع كبرى المصانع والشركات العالمية المرموقة، مما مكننا من استيراد وتوطين أجود الأصناف الدوائية والمستلزمات الطبية عالية الطلب.' : 
+              'UMCO has established strong partnerships with renowned international manufacturers, allowing us to import high-demand medical products and equipment.'
+            }
+          </p>
+        </div>
+
+        <div class="partners-layout">
+          <!-- Left: Big Partners Visual Graphic -->
           <div>
-            <span class="section-tag">${isAr ? 'عن شركة يمكو' : 'About YUMCO'}</span>
-            <h2 class="section-title">${isAr ? 'أكثر من عقدين في خدمة الأمن الدوائي الوطني' : 'Over Two Decades of National Pharma Security'}</h2>
-            <p style="color: var(--text-secondary); line-height: 1.8; margin-bottom: 20px;">
-              ${isAr ? 
-                'تأسست شركة يمكو للصناعات الدوائية والطبية كإحدى الشركات الرائدة التابعة لمجموعة يمكو، وحققت على مدار أكثر من 20 عاماً مكانة مرموقة كأحد أهم صروح التصنيع الدوائي المؤتمت في اليمن. نركز على توطين الصناعات المعقمة ومراهم العلاج الجلدي لتلبية احتياجات المشافي والمراكز الطبية بأعلى درجات الموثوقية.' :
-                'Founded as a flagship subsidiary of YUMCO Medical & Commercial Group, YUMCO Pharmaceuticals has established itself over 20+ years as a premier automated manufacturing platform in Yemen, dedicated to localized production of sterile antiseptics and dermatology therapeutics.'
-              }
-            </p>
-            <div style="background: var(--bg-card-subtle); padding: 24px; border-radius: var(--radius-lg); border-right: 4px solid var(--umco-red); margin-bottom: 20px;">
-              <h4 style="font-weight: 800; color: var(--primary-navy); margin-bottom: 6px;">${isAr ? 'رسالتنا المؤسسية (Mission)' : 'Our Mission'}</h4>
-              <p style="font-size: 0.95rem; color: var(--text-secondary);">
-                ${isAr ? 
-                  'توفير مستحضرات صيدلانية ومستلزمات طبية عالية الموثوقية تُصنّع وفق أدق المعايير العالمية، للإسهام الفاعل في تعزيز الرعاية الصحية وسلامة المرضى وكفاءة الكوادر الطبية.' :
-                  'To manufacture and deliver reliable, high-quality pharmaceutical and medical products that meet international standards, advancing patient care and empowering healthcare professionals.'
-                }
-              </p>
+            <img src="/wp-content/uploads/2026/07/our-partners-new.avif" alt="Our Partners UMCO" class="partners-banner-img" />
+          </div>
+
+          <!-- Right: Two Groups of Partner Logos -->
+          <div>
+            <div style="margin-bottom: 24px;">
+              <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--primary-navy); margin-bottom: 12px; border-bottom: 2px solid var(--border-color); padding-bottom: 6px;">
+                ${isAr ? 'شركاء المستحضرات الصيدلانية (Pharmaceuticals Partners)' : 'Pharmaceuticals Partners'}
+              </h3>
+              <div class="partners-logos-grid">
+                ${pharmaPartners.map(p => `
+                  <div class="partner-logo-box">
+                    <img src="${p}" alt="Pharma Partner Logo" class="partner-logo-img" />
+                  </div>
+                `).join('')}
+              </div>
             </div>
-            <div style="background: var(--bg-card-subtle); padding: 24px; border-radius: var(--radius-lg); border-right: 4px solid var(--accent-blue);">
-              <h4 style="font-weight: 800; color: var(--primary-navy); margin-bottom: 6px;">${isAr ? 'رؤيتنا الاستراتيجية (Vision)' : 'Our Vision'}</h4>
-              <p style="font-size: 0.95rem; color: var(--text-secondary);">
-                ${isAr ? 
-                  'الريادة الإقليمية في الصناعات الدوائية والطبية عبر الابتكار المستمر، توطين التقنيات التصنيعية المؤتمتة، وبناء شراكات استراتيجية تضمن الأمن الدوائي.' :
-                  'To lead the regional pharmaceutical and medical industry through continuous innovation, automated manufacturing excellence, and strategic global partnerships.'
-                }
-              </p>
+
+            <div>
+              <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--primary-navy); margin-bottom: 12px; border-bottom: 2px solid var(--border-color); padding-bottom: 6px;">
+                ${isAr ? 'شركاء المستلزمات والتجهيزات الطبية (Medical Appliances Partners)' : 'Medical Appliances Partners'}
+              </h3>
+              <div class="partners-logos-grid">
+                ${medPartners.map(p => `
+                  <div class="partner-logo-box">
+                    <img src="${p}" alt="Medical Partner Logo" class="partner-logo-img" />
+                  </div>
+                `).join('')}
+              </div>
             </div>
           </div>
-          <div>
-            <img src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&auto=format&fit=crop&q=80" alt="YUMCO Facilities" style="width: 100%; border-radius: var(--radius-xl); box-shadow: var(--shadow-xl); border: 1px solid var(--border-color);" />
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+// 6. Complete About Us Section (Introduction, Facilities, Plan, Certificates Lightbox, Leadership Team)
+function renderAboutFullSection() {
+  const isAr = State.lang === 'ar';
+  return `
+    <section id="about" class="section" style="background: #FFFFFF; border-top: 1px solid var(--border-color);">
+      <div class="container">
+        <!-- 1. Introduction -->
+        <div id="about-intro" style="margin-bottom: 50px;">
+          <div class="umco-ornament-divider">
+            <img src="/wp-content/uploads/2024/07/umco-icon3.png" alt="" class="umco-ornament-img" />
+          </div>
+          <div style="text-align: center; margin-bottom: 30px;">
+            <span style="font-size: 0.8rem; font-weight: 800; color: var(--umco-red); letter-spacing: 1px; text-transform: uppercase;">
+              ${isAr ? 'الصناعات الدوائية والطبية' : 'Pharmaceutical Industries'}
+            </span>
+            <h2 style="font-size: 2.2rem; font-weight: 900; color: var(--primary-navy); margin-top: 6px;">
+              ${isAr ? 'نبذة عن شركة يمكو للصناعات الدوائية' : 'Introduction to UMCO Pharmaceuticals'}
+            </h2>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 40px; align-items: center;">
+            <div style="line-height: 1.85; color: var(--text-secondary); font-size: 0.98rem;">
+              <p style="margin-bottom: 16px;">
+                ${isAr ? 
+                  'تعد <strong style="color:var(--primary-navy);">شركة يمكو للصناعات الدوائية</strong> من كبرى الشركات الرائدة والموثوقة في الجمهورية اليمنية، وهي إحدى شركات <strong style="color:var(--umco-red);">مجموعة يمكو للصناعات الطبية والتجارية</strong>، المكرسة لتطوير خدمات الرعاية الصحية وتوفير المنتجات الدوائية البشرية وفق أحدث المعايير الدولية.' :
+                  'UMCO Pharmaceuticals is a leading and trusted medical company and industry in Yemen, subsidiary of UMCO for Medical & Trading Industries, dedicated to improving healthcare services and human medical products in the Republic of Yemen.'
+                }
+              </p>
+              <p style="margin-bottom: 16px;">
+                ${isAr ? 
+                  'يمتد تاريخنا لأكثر من <span style="color:var(--umco-red); font-weight:800;">20 عاماً منذ تأسيسنا عام 2004 في صنعاء</span>، حيث أصبحت يمكو اسماً مرموقاً في الصناعة الدوائية يحظى بثقة الأطباء والصيادلة والمستشفيات، نظراً لالتزامنا التام بالجودة والتميز العلاجي.' :
+                  'With a history spanning <span style="color:var(--umco-red); font-weight:800;">over 20 years since our establishment in 2004 in Sana’a, Yemen</span>, we have become a renowned name in the industry, known for our commitment to excellence and customer satisfaction.'
+                }
+              </p>
+              <p style="margin-bottom: 16px;">
+                ${isAr ? 
+                  'لخدمة عملائنا في كافة أرجاء اليمن، قمنا بإنشاء فروع استراتيجية رئيسية في <strong style="color:var(--primary-navy);">المكلا وعدن والحديدة وتعز وإب ومأرب وذمار وصعدة</strong>. كما يدعم التزامنا بالتسليم الفوري أسطول توزيع متكامل يضم <span style="color:var(--umco-red); font-weight:800;">أكثر من 20 شاحنة ومركبة نقل مجهزة</span> تضمن وصول الأدوية بأمان حتى لأبعد القرى والمناطق الريفية.' :
+                  'To better serve our clients across Yemen, we have established distribution branches in Sana’a, Mukalla, Aden, Taiz, Ibb, Hodeidah, Mareb, Saada, and Dhamar. Our prompt delivery is powered by a fleet of more than 20 specialized distribution vehicles delivering supplies even to remote rural areas.'
+                }
+              </p>
+            </div>
+            <div>
+              <img src="/wp-content/uploads/2026/07/home-image3.avif" alt="UMCO Company Profile" style="width: 100%; border-radius: var(--radius-xl); box-shadow: 0 16px 36px rgba(0,0,0,0.12);" />
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Vision, Mission, Facilities, Expansion Plan, Activities -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-bottom: 50px;">
+          <!-- Vision & Mission -->
+          <div id="vision-mission" style="background: var(--bg-card-subtle); padding: 28px; border-radius: var(--radius-lg); border-top: 4px solid var(--umco-red);">
+            <div style="font-size: 2rem; margin-bottom: 10px;">🎯</div>
+            <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--primary-navy); margin-bottom: 8px;">
+              ${isAr ? 'الرؤية والرسالة المؤسسية' : 'Vision & Mission'}
+            </h3>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7;">
+              ${isAr ? 
+                '<strong>رسالتنا:</strong> تقديم مستحضرات طبية ودوائية عالية الجودة تسهم بفاعلية في سلامة وصحة المرضى والكوادر الطبية، متجاوزين أعلى المعايير الدستورية العالمية.<br/><br/><strong>رؤيتنا:</strong> الريادة في تحسين الرعاية الصحية في اليمن عبر التصنيع المحلي المؤتمت وتوطين التكنولوجيا الصيدلانية الحديثة.' :
+                '<strong>Our Mission:</strong> To provide high-quality medical products that contribute to the well-being of patients and healthcare professionals, exceeding international standards.<br/><br/><strong>Our Vision:</strong> To improve healthcare services in Yemen through advanced localized pharmaceutical industries.'
+              }
+            </p>
+          </div>
+
+          <!-- Facilities -->
+          <div id="facilities" style="background: var(--bg-card-subtle); padding: 28px; border-radius: var(--radius-lg); border-top: 4px solid #0284C7;">
+            <div style="font-size: 2rem; margin-bottom: 10px;">🏭</div>
+            <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--primary-navy); margin-bottom: 8px;">
+              ${isAr ? 'منشآتنا ومصانعنا المتطورة' : 'Our Facilities'}
+            </h3>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7;">
+              ${isAr ? 
+                'تضم منشآت يمكو <strong style="color:var(--primary-navy);">ثلاثة خطوط إنتاج آلية بالكامل</strong> ومختبر رقابة جودة وأبحاث متطوراً مجهزاً بأحدث الأجهزة التحليلية، يشرف عليه كادر من خيرة الصيادلة والكيميائيين ذوي الخبرة العالية لإجراء الفحوصات الفيزيائية والكيميائية والميكروبيولوجية الدقيقة.' :
+                'UMCO boasts state-of-the-art facilities with three full auto production lines and a well-equipped laboratory staffed by highly educated specialists for rigorous QA/QC testing according to international pharmacopeia.'
+              }
+            </p>
+          </div>
+
+          <!-- Expansion Plan -->
+          <div id="plan" style="background: var(--bg-card-subtle); padding: 28px; border-radius: var(--radius-lg); border-top: 4px solid #10B981;">
+            <div style="font-size: 2rem; margin-bottom: 10px;">🚀</div>
+            <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--primary-navy); margin-bottom: 8px;">
+              ${isAr ? 'خطتنا وتوسعاتنا المستقبلية' : 'Our Plan & Expansion'}
+            </h3>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7;">
+              ${isAr ? 
+                'كجزء من التزامنا الدائم بتلبية الاحتياجات المتنامية لقطاع الرعاية الصحية، تقوم يمكو حالياً بإنشاء <strong style="color:var(--primary-navy);">مصنع دوائي متكامل جديد</strong> يشمل خطوط إنتاج للشراب والأقراص والكبسولات، ليتكامل مع خطوطنا الحالية للمستحضرات السائلة والمراهم والكريمات.' :
+                'As part of our commitment to healthcare security, we are currently constructing a new pharmaceutical factory featuring advanced production lines for syrups and oral solid tablets, expanding our existing topical and sterile capabilities.'
+              }
+            </p>
+          </div>
+
+          <!-- Business Activities -->
+          <div id="activities" style="background: var(--bg-card-subtle); padding: 28px; border-radius: var(--radius-lg); border-top: 4px solid #F59E0B;">
+            <div style="font-size: 2rem; margin-bottom: 10px;">📊</div>
+            <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--primary-navy); margin-bottom: 8px;">
+              ${isAr ? 'الأنشطة التجارية والتوريد' : 'Business Activities'}
+            </h3>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7;">
+              ${isAr ? 
+                'يتجاوز حجم المبيعات السنوية لشركة يمكو <strong style="color:var(--primary-navy);">$25 مليون دولار</strong>، مما يعكس الثقة العميقة لعملائنا في القطاعين العام والخاص، بما في ذلك وكالات الأمم المتحدة والمنظمات الدولية والمشافي الكبرى (مستشفى الثورة، الجمهوري، أزال، الألماني الحديث، جامعة العلوم).' :
+                'Our annual sales turnover exceeds $25 Million, reflecting the trust of our clients including UN agencies, INGOs, and leading public and private hospitals (Al-Thawra, Republican Hospital, Azal, Modern German Hospital).'
+              }
+            </p>
+          </div>
+        </div>
+
+        <!-- 3. Why Choose Us (6 Core Commitments) -->
+        <div id="why-choose-us" style="background: linear-gradient(135deg, #0A192F 0%, #1E293B 100%); border-radius: var(--radius-xl); padding: 40px; color: #FFFFFF; margin-bottom: 50px;">
+          <div style="text-align: center; margin-bottom: 30px;">
+            <span style="font-size: 0.8rem; font-weight: 800; color: #FCA5A5; letter-spacing: 1px; text-transform: uppercase;">
+              ${isAr ? 'التزامات المعايير الأخلاقية والمهنية الصارمة' : 'Ethical & Professional Standards'}
+            </span>
+            <h2 style="font-size: 2rem; font-weight: 900; color: #FFFFFF; margin-top: 6px;">
+              ${isAr ? 'لماذا تختار يمكو؟ (الالتزامات الستة)' : 'Why Choose UMCO? (Our 6 Commitments)'}
+            </h2>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px;">
+            <div style="display: flex; gap: 12px; align-items: flex-start; background: rgba(255,255,255,0.06); padding: 16px 20px; border-radius: var(--radius-md);">
+              <span style="color: #34D399; font-size: 1.25rem;">✔</span>
+              <div>
+                <strong>${isAr ? 'بيئة عمل آمنة وصحية ومطهرة' : 'Working conditions are safe and hygienic'}</strong>
+                <p style="font-size: 0.82rem; color: #CBD5E1; margin-top: 4px;">${isAr ? 'تطبيق كامل لمعايير السلامة المهنية وممارسات التصنيع الجيد GMP.' : 'Strict adherence to cGMP and occupational safety.'}</p>
+              </div>
+            </div>
+            <div style="display: flex; gap: 12px; align-items: flex-start; background: rgba(255,255,255,0.06); padding: 16px 20px; border-radius: var(--radius-md);">
+              <span style="color: #34D399; font-size: 1.25rem;">✔</span>
+              <div>
+                <strong>${isAr ? 'حظر تشغيل الأطفال حظراً قاطعاً' : 'Child Labour shall not be used'}</strong>
+                <p style="font-size: 0.82rem; color: #CBD5E1; margin-top: 4px;">${isAr ? 'التزام تام بالقوانين الوطنية والاتفاقيات الدولية لحقوق الطفل.' : 'Zero tolerance policy for underage employment.'}</p>
+              </div>
+            </div>
+            <div style="display: flex; gap: 12px; align-items: flex-start; background: rgba(255,255,255,0.06); padding: 16px 20px; border-radius: var(--radius-md);">
+              <span style="color: #34D399; font-size: 1.25rem;">✔</span>
+              <div>
+                <strong>${isAr ? 'ساعات عمل منصفة وغير مرهقة' : 'Working hours are not excessive'}</strong>
+                <p style="font-size: 0.82rem; color: #CBD5E1; margin-top: 4px;">${isAr ? 'مراعاة التوازن بين العمل والحياة لجميع كوادر الشركة.' : 'Compliance with statutory labor hours and rest cycles.'}</p>
+              </div>
+            </div>
+            <div style="display: flex; gap: 12px; align-items: flex-start; background: rgba(255,255,255,0.06); padding: 16px 20px; border-radius: var(--radius-md);">
+              <span style="color: #34D399; font-size: 1.25rem;">✔</span>
+              <div>
+                <strong>${isAr ? 'تكافؤ الفرص وعدم التمييز' : 'No discrimination is practiced'}</strong>
+                <p style="font-size: 0.82rem; color: #CBD5E1; margin-top: 4px;">${isAr ? 'العدالة في التوظيف والترقية والتقدير المهني.' : 'Equal opportunity and fair treatment for all employees.'}</p>
+              </div>
+            </div>
+            <div style="display: flex; gap: 12px; align-items: flex-start; background: rgba(255,255,255,0.06); padding: 16px 20px; border-radius: var(--radius-md);">
+              <span style="color: #34D399; font-size: 1.25rem;">✔</span>
+              <div>
+                <strong>${isAr ? 'تأمين وظيفي وتوظيف منتظم' : 'Regular employment is provided'}</strong>
+                <p style="font-size: 0.82rem; color: #CBD5E1; margin-top: 4px;">${isAr ? 'عقود رسمية ومزايا وظيفية مستدامة لكافة الكوادر.' : 'Long-term contracts and comprehensive social benefits.'}</p>
+              </div>
+            </div>
+            <div style="display: flex; gap: 12px; align-items: flex-start; background: rgba(255,255,255,0.06); padding: 16px 20px; border-radius: var(--radius-md);">
+              <span style="color: #34D399; font-size: 1.25rem;">✔</span>
+              <div>
+                <strong>${isAr ? 'احترام وكرامة إنسانية كاملة' : 'No harsh or inhumane treatment is allowed'}</strong>
+                <p style="font-size: 0.82rem; color: #CBD5E1; margin-top: 4px;">${isAr ? 'بيئة تسودها الثقة المتبادلة والكرامة والأخلاق المهنية السامية.' : 'Workplace culture anchored in dignity, respect, and trust.'}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Our Certificates Lightbox Gallery -->
+        <div id="certificates" style="margin-bottom: 50px;">
+          <div class="umco-ornament-divider">
+            <img src="/wp-content/uploads/2024/07/umco-icon3.png" alt="" class="umco-ornament-img" />
+          </div>
+          <div style="text-align: center; margin-bottom: 24px;">
+            <span style="font-size: 0.8rem; font-weight: 800; color: var(--umco-red); letter-spacing: 1px; text-transform: uppercase;">
+              ${isAr ? 'التراخيص والاعتمادات الرسمية' : 'Official Registrations & Licenses'}
+            </span>
+            <h2 style="font-size: 2.1rem; font-weight: 900; color: var(--primary-navy); margin-top: 6px;">
+              ${isAr ? 'شهاداتنا وتراخيصنا المعتمدة' : 'Our Official Certificates'}
+            </h2>
+            <p style="color: var(--text-secondary); max-width: 680px; margin: 8px auto 0 auto; font-size: 0.95rem;">
+              ${isAr ? 'انقر على أي شهادة لمعاينتها بالحجم الكامل والتحقق من مصادقتها الرسمية' : 'Click on any certificate to view high-resolution license details'}
+            </p>
+          </div>
+
+          <div class="certs-gallery-grid">
+            <!-- Cert 1 -->
+            <div class="cert-card" onclick="openCertLightbox('/wp-content/uploads/2024/05/cert1-jpg.webp', '${isAr ? 'ترخيص وزارة الصحة العامة والسكان' : 'Ministry of Public Health License'}')">
+              <img src="/wp-content/uploads/2024/05/cert1-jpg.webp" alt="License 1" class="cert-thumb" />
+              <div class="cert-caption">
+                <strong>${isAr ? 'ترخيص وزارة الصحة العامة والسكان' : 'Ministry of Public Health'}</strong>
+                <small>${isAr ? 'ترخيص مزاولة نشاط التصنيع الدوائي البشري' : 'Pharmaceutical Manufacturing License'}</small>
+              </div>
+            </div>
+
+            <!-- Cert 2 -->
+            <div class="cert-card" onclick="openCertLightbox('/wp-content/uploads/2024/05/cert2-jpg.webp', '${isAr ? 'شهادة الهيئة العليا للأدوية والمستلزمات الطبية' : 'Supreme Board of Drugs Certificate'}')">
+              <img src="/wp-content/uploads/2024/05/cert2-jpg.webp" alt="License 2" class="cert-thumb" />
+              <div class="cert-caption">
+                <strong>${isAr ? 'الهيئة العليا للأدوية والمستلزمات الطبية' : 'Supreme Board of Drugs'}</strong>
+                <small>${isAr ? 'تسجيل واعتماد المصنع والخطوط الإنتاجية' : 'Facility & Line Registration'}</small>
+              </div>
+            </div>
+
+            <!-- Cert 3 -->
+            <div class="cert-card" onclick="openCertLightbox('/wp-content/uploads/2024/05/cert3-jpg.webp', '${isAr ? 'ترخيص وزارة الصناعة والتجارة' : 'Ministry of Industry & Trade'}')">
+              <img src="/wp-content/uploads/2024/05/cert3-jpg.webp" alt="License 3" class="cert-thumb" />
+              <div class="cert-caption">
+                <strong>${isAr ? 'وزارة الصناعة والتجارة' : 'Ministry of Industry & Trade'}</strong>
+                <small>${isAr ? 'سجل المنشأة الصناعية ومطابقة المواصفات' : 'Industrial Registry & Compliance'}</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Leadership Team -->
+        <div id="leadership" class="leadership-section" style="padding-top: 20px;">
+          <div class="umco-ornament-divider">
+            <img src="/wp-content/uploads/2024/07/umco-icon3.png" alt="" class="umco-ornament-img" />
+          </div>
+          <div style="text-align: center; margin-bottom: 24px;">
+            <span style="font-size: 0.8rem; font-weight: 800; color: var(--umco-red); letter-spacing: 1px; text-transform: uppercase;">
+              ${isAr ? 'القيادة التنفيذية والإشراف الصيدلاني' : 'Executive Management'}
+            </span>
+            <h2 style="font-size: 2.1rem; font-weight: 900; color: var(--primary-navy); margin-top: 6px;">
+              ${isAr ? 'فريق قيادة شركة يمكو' : 'Our Leadership Team'}
+            </h2>
+          </div>
+
+          <div class="leadership-layout">
+            <div>
+              <img src="/wp-content/uploads/2024/05/our-team-new.avif" alt="UMCO Leadership Team" class="leadership-img" />
+            </div>
+            <div style="line-height: 1.85; color: var(--text-secondary); font-size: 0.98rem;">
+              <h3 style="font-size: 1.35rem; font-weight: 900; color: var(--primary-navy); margin-bottom: 4px;">
+                ${isAr ? 'الأستاذ أسامة عبد الله إسحاق' : 'Mr. Osamah Abdullah Eshaq'}
+              </h3>
+              <div style="color: var(--umco-red); font-weight: 700; margin-bottom: 16px; font-size: 0.92rem;">
+                ${isAr ? 'المدير التنفيذي - شركة يمكو للصناعات الدوائية' : 'Executive Manager - UMCO Pharmaceuticals'}
+              </div>
+              <p style="margin-bottom: 16px;">
+                ${isAr ? 
+                  'يحظى الأستاذ أسامة عبد الله إسحاق بخبرة واسعة ومتميزة في قطاع الرعاية الصحية والصناعات الصيدلانية، ويقود الشركة برؤية طموحة نحو ترسيخ معايير الجودة العالمية، وتوسيع قاعدة الإنتاج والتوزيع لخدمة المنظومة الصحية اليمنية بكفاءة واقتدار.' :
+                  'We are privileged to have Mr. Osamah Abdullah Eshaq serving as the Executive Manager. With his extensive experience and expertise in the healthcare sector, Mr. Osamah Abdullah Eshaq plays a pivotal role in guiding our company toward achieving its goals and upholding our commitment to delivering exceptional medical products.'
+                }
+              </p>
+              <blockquote style="border-right: 4px solid var(--umco-red); padding: 14px 20px; background: var(--bg-card-subtle); border-radius: var(--radius-md); font-style: italic; color: var(--primary-navy); margin-top: 14px;">
+                ${isAr ? 
+                  '«إن هدفنا الأسمى في يمكو يتجاوز مجرد الإنتاج الدوائي إلى بناء منظومة وطنية للأمن الدوائي تضمن توفير أرقى معايير الشفاء والسلامة لكل مريض يمني.»' :
+                  '“Our highest objective at UMCO goes beyond manufacturing to safeguarding national pharmaceutical security, ensuring the highest efficacy and safety for every patient.”'
+                }
+              </blockquote>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+// 7. Contact Us Section (Branches Phone Directory & Direct Inquiry Form)
+function renderContactUsSection() {
+  const isAr = State.lang === 'ar';
+  const branchContacts = [
+    { city: isAr ? 'صنعاء (المركز الرئيسي)' : 'Sana’a (Headquarters)', phone: '+967 773335372' },
+    { city: isAr ? 'تعز' : 'Taiz', phone: '+967 73336315' },
+    { city: isAr ? 'إب' : 'Ibb', phone: '+967 773336315' },
+    { city: isAr ? 'الحديدة' : 'Hodeidah', phone: '+967 773378314' },
+    { city: isAr ? 'عدن' : 'Aden', phone: '+967 773339362' },
+    { city: isAr ? 'مأرب' : 'Mareb', phone: '+967 773339362' },
+    { city: isAr ? 'حضرموت (المكلا)' : 'Hadhramout (Mukalla)', phone: '+967 7777585205' },
+    { city: isAr ? 'صعدة' : 'Saada', phone: '+967 773378314' },
+    { city: isAr ? 'ذمار' : 'Dhamar', phone: '+967 773336315' }
+  ];
+
+  return `
+    <section id="contact-us" class="section" style="background: #F8FAFC; border-top: 1px solid var(--border-color);">
+      <div class="container">
+        <!-- Ornament -->
+        <div class="umco-ornament-divider">
+          <img src="/wp-content/uploads/2024/07/umco-icon3.png" alt="" class="umco-ornament-img" />
+        </div>
+        <div style="text-align: center; margin-bottom: 36px;">
+          <span style="font-size: 0.8rem; font-weight: 800; color: var(--umco-red); letter-spacing: 1px; text-transform: uppercase;">
+            ${isAr ? 'خدمة العملاء والمشافي' : 'Customer & Hospital Support'}
+          </span>
+          <h2 style="font-size: 2.2rem; font-weight: 900; color: var(--primary-navy); margin-top: 6px;">
+            ${isAr ? 'تواصل معنا واطلب عروض الأسعار' : 'Contact Us & Request a Quote'}
+          </h2>
+          <p style="color: var(--text-secondary); max-width: 650px; margin: 8px auto 0 auto; font-size: 0.95rem;">
+            ${isAr ? 'فريقنا الطبي والتجاري مستعد على مدار الساعة للإجابة عن استفساراتكم وتلبية طلبيات المشافي والمراكز الطبية' : 'Our medical and sales specialists are ready to assist with quotations and hospital supply agreements'}
+          </p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: flex-start;">
+          <!-- Left: Address & Branches Phone Directory -->
+          <div style="background: #FFFFFF; border: 1px solid var(--border-color); border-radius: var(--radius-xl); padding: 32px; box-shadow: var(--shadow-sm);">
+            <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--primary-navy); margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+              <span style="color: var(--umco-red);">📍</span>
+              <span>${isAr ? 'بيانات الاتصال الرئيسية' : 'Primary Contact Info'}</span>
+            </h3>
+
+            <div style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px; font-size: 0.92rem; color: var(--text-secondary);">
+              <div style="display: flex; gap: 10px;">
+                <span style="font-weight: 700; color: var(--primary-navy); min-width: 90px;">${isAr ? 'العنوان:' : 'Address:'}</span>
+                <span>Haddah, Street No.4, Building No. 64, next to Kamran Co., Sana’a - Yemen</span>
+              </div>
+              <div style="display: flex; gap: 10px;">
+                <span style="font-weight: 700; color: var(--primary-navy); min-width: 90px;">${isAr ? 'الهاتف:' : 'Telephone:'}</span>
+                <span dir="ltr">+967 01 414035 / 414025 / 414015</span>
+              </div>
+              <div style="display: flex; gap: 10px;">
+                <span style="font-weight: 700; color: var(--primary-navy); min-width: 90px;">${isAr ? 'الفاكس:' : 'Fax:'}</span>
+                <span dir="ltr">+967 01 411992</span>
+              </div>
+              <div style="display: flex; gap: 10px;">
+                <span style="font-weight: 700; color: var(--primary-navy); min-width: 90px;">${isAr ? 'الإيميل:' : 'Email:'}</span>
+                <span>info@umcopharma.com / umco.medical@gmail.com</span>
+              </div>
+            </div>
+
+            <h4 style="font-size: 1.05rem; font-weight: 800; color: var(--primary-navy); margin-bottom: 14px; border-top: 1px solid var(--border-color); padding-top: 16px;">
+              ${isAr ? 'أرقام هواتف فروع التوزيع والتسويق:' : 'Marketing & Distributing Branches Directory:'}
+            </h4>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.88rem;">
+              ${branchContacts.map(b => `
+                <div style="background: var(--bg-card-subtle); padding: 8px 12px; border-radius: var(--radius-sm); display: flex; justify-content: space-between; align-items: center;">
+                  <strong style="color: var(--primary-navy);">${b.city}</strong>
+                  <a href="tel:${b.phone.replace(/\s+/g, '')}" dir="ltr" style="color: var(--umco-red); font-weight: 700; text-decoration: none;">${b.phone}</a>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Right: Instant Inquiry / Contact Form -->
+          <div style="background: #FFFFFF; border: 1px solid var(--border-color); border-radius: var(--radius-xl); padding: 32px; box-shadow: var(--shadow-sm);">
+            <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--primary-navy); margin-bottom: 6px;">
+              ${isAr ? 'أرسل رسالة مباشرة أو استفساراً' : 'Send Direct Inquiry / Message'}
+            </h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;">
+              ${isAr ? 'سيقوم مسؤول المبيعات أو الشؤون الطبية بالرد عليكم خلال أقل من ساعتين.' : 'Our sales and medical affairs specialists will reply promptly.'}
+            </p>
+
+            <form onsubmit="handleContactUsSubmit(event)">
+              <div class="form-group" style="margin-bottom: 14px;">
+                <label class="form-label">${isAr ? 'الاسم الكامل *' : 'Full Name *'}</label>
+                <input type="text" name="name" required class="form-control" placeholder="${isAr ? 'د. فلان الفلاني' : 'Dr. John Doe'}" />
+              </div>
+              <div class="form-group" style="margin-bottom: 14px;">
+                <label class="form-label">${isAr ? 'البريد الإلكتروني *' : 'Email Address *'}</label>
+                <input type="email" name="email" required class="form-control" placeholder="doctor@hospital.org" />
+              </div>
+              <div class="form-group" style="margin-bottom: 14px;">
+                <label class="form-label">${isAr ? 'رقم الهاتف / الواتساب' : 'Phone / WhatsApp'}</label>
+                <input type="tel" name="phone" class="form-control" placeholder="+967 77..." />
+              </div>
+              <div class="form-group" style="margin-bottom: 18px;">
+                <label class="form-label">${isAr ? 'نص الرسالة أو طلب الاستفسار *' : 'Message / Inquiry Details *'}</label>
+                <textarea name="message" required class="form-control" rows="4" placeholder="${isAr ? 'اكتب استفسارك أو قائمة الأصناف المطلوبة للمشفى...' : 'Enter your inquiry or request for products...'}"></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; justify-content: center;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>${isAr ? 'إرسال الرسالة الآن' : 'Send Message Now'}</span>
+              </button>
+            </form>
           </div>
         </div>
       </div>
@@ -2638,6 +3780,43 @@ function renderModals() {
             <button type="submit" class="btn btn-primary">${isAr ? 'حفظ بيانات الفرع' : 'Save Branch'}</button>
           </div>
         </form>
+      </div>
+    </div>
+
+    <!-- Certificate Lightbox Modal -->
+    <div id="cert-lightbox-modal" class="lightbox-modal" onclick="if(event.target === this) closeCertLightbox();">
+      <div class="lightbox-content">
+        <button type="button" class="lightbox-close" onclick="closeCertLightbox()" title="Close">✕</button>
+        <img id="cert-lightbox-img" src="" alt="Certificate" class="lightbox-img" />
+        <div id="cert-lightbox-caption" style="color: #FFFFFF; margin-top: 14px; font-weight: 700; font-size: 1.05rem; text-align: center; text-shadow: 0 2px 4px rgba(0,0,0,0.8);"></div>
+      </div>
+    </div>
+
+    <!-- Official Products List PDF Viewer Modal -->
+    <div id="products-list-modal" class="modal-backdrop" onclick="if(event.target === this) closeProductsListModal();">
+      <div class="modal-container" style="max-width: 950px; width: 95%; height: 90vh; display: flex; flex-direction: column;">
+        <div class="modal-header" style="background: var(--umco-navy); color: #fff; padding: 16px 24px; border-bottom: 2px solid var(--umco-red);">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 1.4rem;">📄</span>
+            <div>
+              <h3 class="modal-title" style="color: #fff; margin: 0; font-size: 1.15rem;">${isAr ? 'دليل وقائمة منتجات شركة يمكو الدوائية الرسمية' : 'YUMCO Official Products & Pharmaceuticals List'}</h3>
+              <small style="color: rgba(255,255,255,0.7); font-size: 0.8rem;">UMCO Pharmaceuticals Official Catalog (PDF)</small>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <a href="/wp-content/uploads/2025/05/Products-List.pdf" download="YUMCO-Products-List.pdf" class="btn btn-sm" style="background: var(--umco-red); color: #fff; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-weight: 700;">
+              ⬇ ${isAr ? 'تحميل PDF' : 'Download PDF'}
+            </a>
+            <button class="btn btn-icon-only" style="color: #fff;" onclick="closeProductsListModal()">✕</button>
+          </div>
+        </div>
+        <div class="modal-body" style="padding: 0; flex: 1; background: #525659; overflow: hidden; display: flex;">
+          <iframe src="/wp-content/uploads/2025/05/Products-List.pdf#toolbar=1" style="width: 100%; height: 100%; border: none;" title="Products List PDF"></iframe>
+        </div>
+        <div class="modal-footer" style="padding: 12px 24px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 0.85rem; color: #64748b;">${isAr ? 'يحتوي الملف على كافة الأصناف الدوائية والمستلزمات الطبية المسجلة رسمياً' : 'Official pharmaceutical items & registered medical appliances catalog'}</span>
+          <button type="button" class="btn btn-outline" onclick="closeProductsListModal()">${isAr ? 'إغلاق' : 'Close'}</button>
+        </div>
       </div>
     </div>
   `;

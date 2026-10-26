@@ -1,0 +1,75 @@
+.elementor-kit-11{--e-global-color-primary:#000000;--e-global-color-secondary:#111111;--e-global-color-text:#252525;--e-global-color-accent:#D9151C;--e-global-color-kadence1:#2B6CB0;--e-global-color-kadence2:#215387;--e-global-color-kadence3:#1A202C;--e-global-color-kadence4:#2D3748;--e-global-color-kadence5:#4A5568;--e-global-color-kadence6:#718096;--e-global-color-kadence7:#EDF2F7;--e-global-color-kadence8:#F7FAFC;--e-global-color-kadence9:#ffffff;--e-global-color-9ef3e2f:#001558;--e-global-color-23125ce:#D9151C;--e-global-color-16e5119:#022359;--e-global-color-d9ac373:#17386E;--e-global-typography-primary-font-family:"Roboto";--e-global-typography-primary-font-weight:600;--e-global-typography-secondary-font-family:"Roboto Slab";--e-global-typography-secondary-font-weight:400;--e-global-typography-text-font-family:"Roboto";--e-global-typography-text-font-weight:400;--e-global-typography-accent-font-family:"Roboto";--e-global-typography-accent-font-weight:500;background-color:#FFFFFF;color:#B4B0B0;}.elementor-kit-11.el-is-editing{--global-palette1:#2B6CB0;--global-palette2:#215387;--global-palette3:#1A202C;--global-palette4:#2D3748;--global-palette5:#4A5568;--global-palette6:#718096;--global-palette7:#EDF2F7;--global-palette8:#F7FAFC;--global-palette9:#ffffff;}.elementor-kit-11 button,.elementor-kit-11 input[type="button"],.elementor-kit-11 input[type="submit"],.elementor-kit-11 .elementor-button{background-color:#9E1217;border-radius:0px 0px 0px 0px;padding:10px 15px 10px 15px;}.elementor-kit-11 e-page-transition{background-color:#FFBC7D;}.elementor-kit-11 a{color:#FFFFFF;}.elementor-kit-11 a:hover{color:var( --e-global-color-accent );}.elementor-kit-11 h1{color:#B4B0B0;}.elementor-kit-11 h2{color:#B4B0B0;}.elementor-kit-11 h3{color:#B4B0B0;}.elementor-kit-11 h4{color:#B4B0B0;}.elementor-kit-11 h5{color:#B4B0B0;}.elementor-kit-11 h6{color:#B4B0B0;}.elementor-section.elementor-section-boxed > .elementor-container{max-width:1140px;}.e-con{--container-max-width:1140px;}.elementor-widget:not(:last-child){margin-block-end:20px;}.elementor-element{--widgets-spacing:20px 20px;--widgets-spacing-row:20px;--widgets-spacing-column:20px;}{}h1.entry-title{display:var(--page-title-display);}@media(max-width:1024px){.elementor-section.elementor-section-boxed > .elementor-container{max-width:1024px;}.e-con{--container-max-width:1024px;}}@media(max-width:767px){.elementor-section.elementor-section-boxed > .elementor-container{max-width:767px;}.e-con{--container-max-width:767px;}}/* Start custom CSS */.elementor-kit-11 .elementor-image-box-title a::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+.elementor-kit-11 .elementor-icon-box-title a::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+.elementor-widget-text-editor p:last-child{ margin-bottom:0px;
+}
+.hoverbox {
+   background: #e6eff8;
+    transition: .9s;
+}
+.hoverbox:hover {
+   background: #fff;
+ transition: .9s;
+}/* End custom CSS */
+/* Start Custom Fonts CSS */@font-face {
+	font-family: 'Roboto';
+	font-style: normal;
+	font-weight: 900;
+	font-display: auto;
+	src: url(../../2024/05/Roboto-Black.woff2) format('woff2'),
+		url(../../2024/05/Roboto-Black.woff) format('woff');
+}
+@font-face {
+	font-family: 'Roboto';
+	font-style: normal;
+	font-weight: bold;
+	font-display: auto;
+	src: url(../../2024/05/Roboto-Bold.woff2) format('woff2'),
+		url(../../2024/05/Roboto-Bold.woff) format('woff');
+}
+@font-face {
+	font-family: 'Roboto';
+	font-style: normal;
+	font-weight: 300;
+	font-display: auto;
+	src: url(../../2024/05/Roboto-Light.woff2) format('woff2'),
+		url(../../2024/05/Roboto-Light.woff) format('woff');
+}
+@font-face {
+	font-family: 'Roboto';
+	font-style: normal;
+	font-weight: 500;
+	font-display: auto;
+	src: url(../../2024/05/Roboto-Medium.woff2) format('woff2'),
+		url(../../2024/05/Roboto-Medium.woff) format('woff');
+}
+@font-face {
+	font-family: 'Roboto';
+	font-style: normal;
+	font-weight: normal;
+	font-display: auto;
+	src: url(../../2024/05/Roboto-Regular.woff2) format('woff2'),
+		url(../../2024/05/Roboto-Regular.woff) format('woff');
+}
+@font-face {
+	font-family: 'Roboto';
+	font-style: normal;
+	font-weight: 100;
+	font-display: auto;
+	src: url(../../2024/05/Roboto-Thin.woff2) format('woff2'),
+		url(../../2024/05/Roboto-Thin.woff) format('woff');
+}
+/* End Custom Fonts CSS */
