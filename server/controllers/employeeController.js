@@ -439,11 +439,47 @@ const getHRStats = async (req, res) => {
   }
 };
 
+/**
+ * Delete an employee and linked user profile (Admin / IT Director / HR)
+ */
+const deleteEmployee = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const emp = get('SELECT * FROM employees WHERE id = ?', [id]);
+    if (!emp) {
+      return res.status(404).json({
+        success: false,
+        message_en: 'Employee not found.',
+        message_ar: 'الموظف غير موجود.'
+      });
+    }
+
+    // Delete user which cascades or delete both
+    run('DELETE FROM employees WHERE id = ?', [id]);
+    run('DELETE FROM users WHERE id = ?', [emp.user_id]);
+
+    return res.json({
+      success: true,
+      message_en: 'Employee record deleted successfully.',
+      message_ar: 'تم حذف سجل الموظف وحسابه بنجاح.'
+    });
+  } catch (err) {
+    console.error('deleteEmployee error:', err);
+    return res.status(500).json({
+      success: false,
+      message_en: 'Failed to delete employee.',
+      message_ar: 'فشل في حذف الموظف.'
+    });
+  }
+};
+
 module.exports = {
   getEmployees,
   getEmployeeById,
   createEmployee,
   updateEmployee,
   updateEmployeeStatus,
-  getHRStats
+  getHRStats,
+  deleteEmployee
 };
+

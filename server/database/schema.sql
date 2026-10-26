@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
     name_en TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
-    role TEXT NOT NULL CHECK(role IN ('super_admin', 'hr_manager', 'branch_manager', 'employee', 'medical_rep', 'marketing')),
+    role TEXT NOT NULL CHECK(role IN ('super_admin', 'it_admin', 'hr_manager', 'branch_manager', 'employee', 'medical_rep', 'marketing')),
     phone TEXT,
     avatar_url TEXT,
     is_active INTEGER NOT NULL DEFAULT 1,
@@ -221,6 +221,16 @@ CREATE TABLE IF NOT EXISTS customer_inquiries (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 13. Dynamic Site Settings & Visual Identity (Admin & IT Director Hub)
+CREATE TABLE IF NOT EXISTS site_settings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    setting_key TEXT UNIQUE NOT NULL,
+    setting_value TEXT NOT NULL,
+    category TEXT NOT NULL DEFAULT 'branding',
+    updated_by_user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Indices for Fast Queries
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
@@ -235,4 +245,5 @@ CREATE INDEX IF NOT EXISTS idx_products_category ON products(category_id);
 CREATE INDEX IF NOT EXISTS idx_products_slug ON products(slug);
 CREATE INDEX IF NOT EXISTS idx_announcements_cat ON announcements(category, is_active);
 CREATE INDEX IF NOT EXISTS idx_inquiries_status ON customer_inquiries(status);
+CREATE INDEX IF NOT EXISTS idx_site_settings_key ON site_settings(setting_key);
 

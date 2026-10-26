@@ -100,12 +100,17 @@ const I18N = {
     // Portal & HR / Tasks / Marketing
     portal_title: "بوابة العمليات وإدارة الموارد والمهام",
     tab_tasks: "لوحة مهام الموظفين (Tasks)",
+    tab_branding: "إدارة الهوية والمظهر والروابط",
+    tab_branches_mgmt: "إدارة شبكة الفروع",
     tab_employees: "سجل الموظفين وإدارة HR",
     tab_inquiries: "استفسارات العملاء والأطباء",
     tab_campaigns: "إدارة الحملات والإعلانات",
     tab_products_mgmt: "إدارة ونشر الأدوية",
     tab_rfq_review: "طلبات عروض الأسعار",
     tab_pv_review: "بلاغات التيقظ الدوائي",
+    btn_add_branch: "إضافة فرع جديد",
+    btn_save_settings: "حفظ وتطبيق الهوية فوراً",
+    btn_reset_settings: "استعادة الضبط الافتراضي",
     btn_add_employee: "إضافة موظف جديد (HR)",
     btn_create_task: "إنشاء مهمة جديدة",
     btn_add_announcement: "نشر إعلان / حملة جديدة",
@@ -218,12 +223,17 @@ const I18N = {
     // Portal & HR / Tasks / Marketing
     portal_title: "Enterprise Operations & Employee Task System",
     tab_tasks: "Employee Tasks & Kanban",
+    tab_branding: "Theme & Visual Identity",
+    tab_branches_mgmt: "Branches Management",
     tab_employees: "HR Personnel Directory",
     tab_inquiries: "Doctor & Client Inquiries",
     tab_campaigns: "Marketing & Campaigns",
     tab_products_mgmt: "Formulations Management",
     tab_rfq_review: "RFQ Quotations",
     tab_pv_review: "Drug Safety Reports",
+    btn_add_branch: "Add New Branch",
+    btn_save_settings: "Save & Apply Identity",
+    btn_reset_settings: "Reset Defaults",
     btn_add_employee: "Add New Employee (HR)",
     btn_create_task: "Assign New Task",
     btn_add_announcement: "Publish New Campaign",
@@ -272,6 +282,9 @@ const State = {
   pvReports: [],
   announcements: [],
   inquiries: [],
+  settings: {},
+  branchesMap: null,
+  branchMarkers: {},
   
   selectedCategory: 'all',
   selectedClinicalCategory: 'all',
@@ -352,7 +365,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  // Load public baseline data
+  // Load settings & baseline data
+  await loadSettingsData();
   await loadCatalogData();
   await loadAnnouncementsData();
   await loadBranchesData();
@@ -380,6 +394,57 @@ function t(key) {
 }
 
 // --- 6. Data Fetching ---
+async function loadSettingsData() {
+  try {
+    const res = await API.get('/settings');
+    if (res.success && res.settings) {
+      State.settings = res.settings;
+      applySiteSettings(res.settings);
+    }
+  } catch (err) {
+    console.error('Error loading settings:', err);
+  }
+}
+
+function applySiteSettings(settings) {
+  if (!settings || typeof settings !== 'object') return;
+  const root = document.documentElement;
+
+  if (settings.primary_color) {
+    root.style.setProperty('--umco-red', settings.primary_color);
+    root.style.setProperty('--primary-color', settings.primary_color);
+  }
+  if (settings.primary_hover) {
+    root.style.setProperty('--umco-red-hover', settings.primary_hover);
+  }
+  if (settings.accent_color) {
+    root.style.setProperty('--accent-teal', settings.accent_color);
+    root.style.setProperty('--accent-color', settings.accent_color);
+  }
+  if (settings.font_size_base) {
+    root.style.setProperty('--base-font-size', `${settings.font_size_base}px`);
+  }
+  if (settings.heading_scale) {
+    root.style.setProperty('--heading-scale', settings.heading_scale);
+  }
+  if (settings.custom_font_url) {
+    let fontEl = document.getElementById('custom-dynamic-font');
+    if (!fontEl) {
+      fontEl = document.createElement('link');
+      fontEl.id = 'custom-dynamic-font';
+      fontEl.rel = 'stylesheet';
+      document.head.appendChild(fontEl);
+    }
+    fontEl.href = settings.custom_font_url;
+  }
+  if (settings.font_family_ar) {
+    root.style.setProperty('--font-ar', `'${settings.font_family_ar}', sans-serif`);
+  }
+  if (settings.font_family_en) {
+    root.style.setProperty('--font-en', `'${settings.font_family_en}', sans-serif`);
+  }
+}
+
 async function loadCatalogData() {
   try {
     const [catsRes, prodsRes] = await Promise.all([
@@ -420,13 +485,15 @@ async function loadPortalData() {
     ];
 
     const role = State.user.role;
-    if (role === 'super_admin' || role === 'hr_manager') {
+    const isAdminOrIT = role === 'super_admin' || role === 'it_admin';
+
+    if (isAdminOrIT || role === 'hr_manager') {
       promises.push(API.get('/employees', true));
       promises.push(API.get('/quotes', true));
       promises.push(API.get('/pv', true));
     }
 
-    if (role === 'super_admin' || role === 'marketing') {
+    if (isAdminOrIT || role === 'marketing') {
       promises.push(API.get('/inquiries', true));
       promises.push(API.get('/announcements', true));
       if (role === 'marketing') {
@@ -434,12 +501,16 @@ async function loadPortalData() {
       }
     }
 
+    if (isAdminOrIT) {
+      promises.push(API.get('/branches?all=true', true));
+    }
+
     const results = await Promise.all(promises);
     if (results[0] && results[0].success) State.tasks = results[0].tasks;
     if (results[1] && results[1].success) State.notifications = results[1].notifications;
 
     let idx = 2;
-    if (role === 'super_admin' || role === 'hr_manager') {
+    if (isAdminOrIT || role === 'hr_manager') {
       if (results[idx] && results[idx].success) State.employees = results[idx].employees;
       idx++;
       if (results[idx] && results[idx].success) State.quotes = results[idx].quotes;
@@ -448,7 +519,7 @@ async function loadPortalData() {
       idx++;
     }
 
-    if (role === 'super_admin' || role === 'marketing') {
+    if (isAdminOrIT || role === 'marketing') {
       if (results[idx] && results[idx].success) State.inquiries = results[idx].inquiries;
       idx++;
       if (results[idx] && results[idx].success) State.announcements = results[idx].announcements;
@@ -457,6 +528,11 @@ async function loadPortalData() {
         if (results[idx] && results[idx].success) State.quotes = results[idx].quotes;
         idx++;
       }
+    }
+
+    if (isAdminOrIT) {
+      if (results[idx] && results[idx].success) State.branches = results[idx].branches;
+      idx++;
     }
   } catch (err) {
     console.error('Error loading portal data:', err);
@@ -528,6 +604,10 @@ function renderApp() {
 
   // Attach dynamic handlers
   attachViewEvents();
+
+  if (State.view === 'public') {
+    setTimeout(initBranchesMap, 100);
+  }
 }
 
 // Top Notice Bar
@@ -558,28 +638,46 @@ function renderTopNoticeBar() {
 function renderNavbar() {
   const isAr = State.lang === 'ar';
   const unreadCount = State.notifications.filter(n => !n.is_read).length;
+  const s = State.settings || {};
+
+  const brandName = isAr ? (s.company_name_ar || 'يمكو للصناعات الدوائية') : (s.company_name_en || 'YUMCO PHARMA');
+  const brandSub = isAr ? (s.company_sub_ar || 'جودة دوائية تفوق التوقعات') : (s.company_sub_en || 'Pharmaceutical Excellence');
+  const badgeText = s.logo_badge_text || 'YM';
+  const logoImg = s.logo_image_url;
+  const logoSize = s.logo_size ? `${s.logo_size}px` : '40px';
+
+  // Dynamic links from settings or defaults
+  const navLinks = (s.nav_links && Array.isArray(s.nav_links))
+    ? s.nav_links.filter(l => l.enabled !== false)
+    : [
+        { label_ar: t('nav_home'), label_en: 'Home', url: '#hero' },
+        { label_ar: t('nav_campaigns'), label_en: 'Campaigns', url: '#campaigns' },
+        { label_ar: t('nav_products'), label_en: 'Products', url: '#products' },
+        { label_ar: t('nav_clinical'), label_en: 'Clinical Guide', url: '#clinical' },
+        { label_ar: t('nav_manufacturing'), label_en: 'Manufacturing', url: '#manufacturing' },
+        { label_ar: t('nav_branches'), label_en: 'Branches', url: '#branches' },
+        { label_ar: t('nav_rfq'), label_en: 'RFQ', url: '#rfq' },
+        { label_ar: t('nav_pv'), label_en: 'PV Hub', url: '#pv' },
+        { label_ar: t('nav_about'), label_en: 'About', url: '#about' }
+      ];
 
   return `
     <nav class="navbar">
       <div class="container navbar-container">
         <div class="brand-logo" onclick="switchView('public')">
-          <div class="logo-badge">YM</div>
+          <div class="logo-badge" style="width: ${logoSize}; height: ${logoSize};">
+            ${logoImg ? `<img src="${logoImg}" alt="Logo" style="width: 100%; height: 100%; object-fit: contain; border-radius: inherit;">` : badgeText}
+          </div>
           <div class="brand-text">
-            <span class="brand-name">${isAr ? 'يمكو للصناعات الدوائية' : 'YUMCO PHARMA'}</span>
-            <span class="brand-sub">${isAr ? 'جودة دوائية تفوق التوقعات' : 'Pharmaceutical Excellence'}</span>
+            <span class="brand-name">${brandName}</span>
+            <span class="brand-sub">${brandSub}</span>
           </div>
         </div>
 
         <ul class="nav-links">
-          <li><a href="#hero" class="nav-link ${State.view === 'public' ? 'active' : ''}" onclick="switchView('public')">${t('nav_home')}</a></li>
-          <li><a href="#campaigns" class="nav-link" onclick="switchView('public')">${t('nav_campaigns')}</a></li>
-          <li><a href="#products" class="nav-link" onclick="switchView('public')">${t('nav_products')}</a></li>
-          <li><a href="#clinical" class="nav-link" onclick="switchView('public')">${t('nav_clinical')}</a></li>
-          <li><a href="#manufacturing" class="nav-link" onclick="switchView('public')">${t('nav_manufacturing')}</a></li>
-          <li><a href="#branches" class="nav-link" onclick="switchView('public')">${t('nav_branches')}</a></li>
-          <li><a href="#rfq" class="nav-link" onclick="switchView('public')">${t('nav_rfq')}</a></li>
-          <li><a href="#pv" class="nav-link" onclick="switchView('public')">${t('nav_pv')}</a></li>
-          <li><a href="#about" class="nav-link" onclick="switchView('public')">${t('nav_about')}</a></li>
+          ${navLinks.map(l => `
+            <li><a href="${l.url}" class="nav-link" onclick="switchView('public')">${isAr ? (l.label_ar || l.label_en) : (l.label_en || l.label_ar)}</a></li>
+          `).join('')}
         </ul>
 
         <div class="nav-actions">
@@ -1179,9 +1277,33 @@ function renderBranchesSection() {
           <p class="section-desc">${t('branches_desc')}</p>
         </div>
 
+        <!-- Interactive Branches & Logistics Leaflet Map -->
+        <div class="branches-map-card" style="margin-bottom: 2rem;">
+          <div class="branches-map-header">
+            <div class="branches-map-title">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <div>
+                <div style="font-weight: 800;">${isAr ? 'خريطة فروع وشبكة التوزيع المعتمدة لشركة يمكو' : 'Interactive YUMCO Nationwide Logistics Map'}</div>
+                <div class="branches-map-subtitle">${isAr ? 'انقر على أي محافظة للاستعراض والتواصل المباشر والوصول' : 'Select any branch to inspect geographic location & contact details'}</div>
+              </div>
+            </div>
+            <div class="branches-map-controls">
+              <select class="branches-map-select" onchange="window.focusBranchMap(this.value)">
+                <option value="">${isAr ? '-- اختر الفرع للتكبير على الخريطة --' : '-- Jump to Branch on Map --'}</option>
+                ${State.branches.map(b => `
+                  <option value="${b.id}">${isAr ? b.city_ar : b.city_en} ${b.is_headquarters ? (isAr ? '(المقر الرئيسي)' : '(HQ)') : ''}</option>
+                `).join('')}
+              </select>
+            </div>
+          </div>
+          <div class="branches-map-container" id="branches-map-container">
+            <div id="branches-leaflet-map"></div>
+          </div>
+        </div>
+
         <div class="branches-grid">
           ${State.branches.map(b => `
-            <div class="branch-card ${b.is_headquarters ? 'is-hq' : ''}">
+            <div class="branch-card ${b.is_headquarters ? 'is-hq' : ''}" id="branch-card-${b.id}">
               ${b.is_headquarters ? `<span class="branch-hq-tag">${t('branch_hq')}</span>` : ''}
               <h3 class="branch-city">${isAr ? b.city_ar : b.city_en}</h3>
               <p class="branch-address">${isAr ? b.address_ar : b.address_en}</p>
@@ -1200,8 +1322,12 @@ function renderBranchesSection() {
                   <span style="color: var(--text-muted);">${isAr ? 'المسؤول:' : 'Manager:'}</span>
                   <span style="font-weight: 700; color: var(--primary-navy);">${isAr ? b.manager_name_ar : b.manager_name_en}</span>
                 </div>
-                <div style="margin-top: 8px;">
-                  <a href="tel:${b.phone_primary.replace(/\s+/g, '')}" class="btn btn-outline btn-sm" style="width: 100%;">
+                <div style="margin-top: 10px; display: flex; gap: 8px;">
+                  <button type="button" class="btn btn-outline btn-sm" style="flex: 1;" onclick="window.focusBranchMap(${b.id})">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <span>${isAr ? 'عرض بالخريطة' : 'Show on Map'}</span>
+                  </button>
+                  <a href="tel:${b.phone_primary.replace(/\s+/g, '')}" class="btn btn-primary btn-sm" style="flex: 1;">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                     <span>${t('btn_contact_branch')}</span>
                   </a>
@@ -1414,13 +1540,14 @@ function renderAboutSection() {
   `;
 }
 
-// --- 10. ENTERPRISE PORTAL VIEW (HR, TASKS, MARKETING, NOTIFICATIONS) ---
+// --- 10. ENTERPRISE PORTAL VIEW (HR, TASKS, MARKETING, NOTIFICATIONS, IT CUSTOMIZER) ---
 function renderPortalView() {
   if (!State.user) return '';
   const isAr = State.lang === 'ar';
   const role = State.user.role;
-  const isHR = role === 'super_admin' || role === 'hr_manager';
-  const isMarketing = role === 'super_admin' || role === 'marketing';
+  const isAdminOrIT = role === 'super_admin' || role === 'it_admin';
+  const isHR = isAdminOrIT || role === 'hr_manager';
+  const isMarketing = isAdminOrIT || role === 'marketing';
 
   return `
     <div class="portal-view">
@@ -1440,7 +1567,18 @@ function renderPortalView() {
             </div>
           </div>
 
-          <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+          <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            ${isAdminOrIT ? `
+              <button class="btn btn-outline btn-sm" onclick="switchPortalTab('branding')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                <span>${t('tab_branding')}</span>
+              </button>
+              <button class="btn btn-outline btn-sm" onclick="openBranchCreateModal()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/><line x1="12" y1="7" x2="12" y2="13"/><line x1="9" y1="10" x2="15" y2="10"/></svg>
+                <span>${t('btn_add_branch')}</span>
+              </button>
+            ` : ''}
+
             ${isMarketing ? `
               <button class="btn btn-primary btn-sm" onclick="openModal('create-announcement-modal')">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -1471,6 +1609,17 @@ function renderPortalView() {
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
             <span>${t('tab_tasks')} (${State.tasks.length})</span>
           </button>
+
+          ${isAdminOrIT ? `
+            <button class="portal-tab-item ${State.portalTab === 'branding' ? 'active' : ''}" onclick="switchPortalTab('branding')">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 10 10 0 0 0 0-20"/><circle cx="12" cy="12" r="4"/></svg>
+              <span>${t('tab_branding')}</span>
+            </button>
+            <button class="portal-tab-item ${State.portalTab === 'branches_mgmt' ? 'active' : ''}" onclick="switchPortalTab('branches_mgmt')">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span>${t('tab_branches_mgmt')} (${State.branches.length})</span>
+            </button>
+          ` : ''}
           
           ${isMarketing ? `
             <button class="portal-tab-item ${State.portalTab === 'inquiries' ? 'active' : ''}" onclick="switchPortalTab('inquiries')">
@@ -1509,6 +1658,8 @@ function renderPortalView() {
         <!-- Portal Tab Body -->
         <div>
           ${State.portalTab === 'tasks' ? renderTasksTab() : ''}
+          ${State.portalTab === 'branding' ? renderBrandingTab() : ''}
+          ${State.portalTab === 'branches_mgmt' ? renderBranchesMgmtTab() : ''}
           ${State.portalTab === 'inquiries' ? renderInquiriesTab() : ''}
           ${State.portalTab === 'campaigns' ? renderCampaignsTab() : ''}
           ${State.portalTab === 'products_mgmt' ? renderProductsMgmtTab() : ''}
@@ -1874,9 +2025,14 @@ function renderEmployeesTab() {
                     <span class="status-badge status-${emp.status}">${emp.status}</span>
                   </td>
                   <td>
-                    <button class="btn btn-outline btn-sm" onclick="assignTaskToEmployee(${emp.user_id}, '${emp.name_ar}')">
-                      ${isAr ? 'إسناد مهمة' : 'Assign Task'}
-                    </button>
+                    <div style="display: flex; gap: 6px;">
+                      <button class="btn btn-outline btn-sm" onclick="assignTaskToEmployee(${emp.user_id}, '${emp.name_ar}')">
+                        ${isAr ? 'إسناد مهمة' : 'Assign Task'}
+                      </button>
+                      <button class="btn btn-outline-red btn-sm" onclick="deleteEmployeeHandler(${emp.id})" title="${isAr ? 'حذف الموظف' : 'Delete Employee'}">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                      </button>
+                    </div>
                   </td>
                 </tr>
               `).join('')}
@@ -2072,9 +2228,10 @@ function renderModals() {
             </div>
             <div style="background: var(--bg-card-subtle); padding: 12px; border-radius: var(--radius-sm); font-size: 0.8rem; color: var(--text-secondary);">
               <strong>${isAr ? 'حسابات تجريبية سريعة:' : 'Demo Accounts:'}</strong><br/>
+              - <strong>IT Director:</strong> it@umcopharma.com | it123<br/>
+              - <strong>Super Admin:</strong> admin@umcopharma.com | admin123<br/>
               - <strong>Marketing:</strong> marketing@umcopharma.com | marketing123<br/>
               - <strong>HR Manager:</strong> hr@umcopharma.com | hr123<br/>
-              - <strong>Super Admin:</strong> admin@umcopharma.com | admin123<br/>
               - <strong>Engineer:</strong> tariq.saleh@umcopharma.com | emp123
             </div>
           </div>
@@ -2397,6 +2554,90 @@ function renderModals() {
     <div id="catalog-print-modal" class="modal-backdrop">
       <div class="modal-container" style="max-width: 950px;" id="catalog-print-content">
         <!-- Rendered Dynamically -->
+      </div>
+    </div>
+
+    <!-- Create / Edit Branch Modal (Admin & IT Director) -->
+    <div id="create-branch-modal" class="modal-backdrop">
+      <div class="modal-container" style="max-width: 680px;">
+        <div class="modal-header">
+          <h3 class="modal-title" id="branch-modal-title">${isAr ? 'إضافة / تعديل فرع لشركة يمكو' : 'Add / Edit YUMCO Branch'}</h3>
+          <button class="btn btn-icon-only" onclick="closeModal('create-branch-modal')">✕</button>
+        </div>
+        <form id="branch-modal-form" onsubmit="submitBranchForm(event)">
+          <input type="hidden" name="branch_id" id="branch-form-id" value="" />
+          <div class="modal-body">
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label class="form-label">${isAr ? 'اسم المدينة بالعربية *' : 'City (Arabic) *'}</label>
+                <input type="text" name="city_ar" id="branch-city-ar" required class="form-control" placeholder="صنعاء / عدن / تعز..." />
+              </div>
+              <div class="form-group">
+                <label class="form-label">${isAr ? 'اسم المدينة بالإنجليزية *' : 'City (English) *'}</label>
+                <input type="text" name="city_en" id="branch-city-en" required class="form-control" placeholder="Sana'a / Aden / Taiz..." />
+              </div>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label class="form-label">${isAr ? 'العنوان بالعربية *' : 'Address (Arabic) *'}</label>
+                <input type="text" name="address_ar" id="branch-address-ar" required class="form-control" placeholder="الشارع العام، بجوار..." />
+              </div>
+              <div class="form-group">
+                <label class="form-label">${isAr ? 'العنوان بالإنجليزية' : 'Address (English)'}</label>
+                <input type="text" name="address_en" id="branch-address-en" class="form-control" placeholder="Main St., Beside..." />
+              </div>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label class="form-label">${isAr ? 'الهاتف الأساسي *' : 'Primary Phone *'}</label>
+                <input type="text" name="phone_primary" id="branch-phone-primary" required class="form-control" placeholder="+967 1 234567" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">${isAr ? 'هاتف ثانوي' : 'Secondary Phone'}</label>
+                <input type="text" name="phone_secondary" id="branch-phone-secondary" class="form-control" placeholder="+967 777 123456" />
+              </div>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label class="form-label">${isAr ? 'المدير المسؤول بالعربية' : 'Manager Name (Arabic)'}</label>
+                <input type="text" name="manager_name_ar" id="branch-manager-ar" class="form-control" placeholder="د. أحمد الحمادي..." />
+              </div>
+              <div class="form-group">
+                <label class="form-label">${isAr ? 'المدير المسؤول بالإنجليزية' : 'Manager Name (English)'}</label>
+                <input type="text" name="manager_name_en" id="branch-manager-en" class="form-control" placeholder="Dr. Ahmed Al-Hammadi" />
+              </div>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label class="form-label">${isAr ? 'خط العرض (Latitude GPS)' : 'Latitude (GPS)'}</label>
+                <input type="number" step="0.000001" name="latitude" id="branch-lat" class="form-control" placeholder="15.3694" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">${isAr ? 'خط الطول (Longitude GPS)' : 'Longitude (GPS)'}</label>
+                <input type="number" step="0.000001" name="longitude" id="branch-lng" class="form-control" placeholder="44.1910" />
+              </div>
+            </div>
+
+            <div class="form-grid-2" style="align-items: center; background: #f8fafc; padding: 12px; border-radius: var(--radius-md);">
+              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.9rem;">
+                <input type="checkbox" name="is_headquarters" id="branch-is-hq" value="1" />
+                <strong>${isAr ? 'هل هذا الفرع هو المقر الرئيسي العام (HQ)؟' : 'Is this Main Headquarters (HQ)?'}</strong>
+              </label>
+              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.9rem;">
+                <input type="checkbox" name="is_active" id="branch-is-active" value="1" checked />
+                <span>${isAr ? 'الفرع نشط ومفعل حالياً' : 'Branch is currently active'}</span>
+              </label>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline" onclick="closeModal('create-branch-modal')">${isAr ? 'إلغاء' : 'Cancel'}</button>
+            <button type="submit" class="btn btn-primary">${isAr ? 'حفظ بيانات الفرع' : 'Save Branch'}</button>
+          </div>
+        </form>
       </div>
     </div>
   `;
@@ -2974,6 +3215,7 @@ function formatRole(role) {
   const isAr = State.lang === 'ar';
   const roles = {
     super_admin: isAr ? 'مشرف النظام العام' : 'Super Admin',
+    it_admin: isAr ? 'مهندس الموقع ومدير تقنية المعلومات' : 'IT Director & Systems Engineer',
     marketing: isAr ? 'مسؤول التسويق والإعلام الدوائي وخدمة العملاء' : 'Marketing & Medical Media Specialist',
     hr_manager: isAr ? 'مدير الموارد البشرية' : 'HR Manager',
     branch_manager: isAr ? 'مدير فرع' : 'Branch Manager',
@@ -3017,3 +3259,660 @@ function setupEventListeners() {
 function attachViewEvents() {
   // Empty placeholder for any post-render bindings
 }
+
+// =====================================================================
+// BRANDING & VISUAL IDENTITY TAB RENDERER (ADMIN & IT DIRECTOR)
+// =====================================================================
+function renderBrandingTab() {
+  const isAr = State.lang === 'ar';
+  const s = State.settings || {};
+
+  return `
+    <div>
+      <div class="table-header-toolbar" style="background: #fff; border-radius: var(--radius-lg); margin-bottom: 24px; border: 1px solid var(--border-color); padding: 20px;">
+        <div>
+          <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--primary-navy);">${isAr ? 'لوحة تحكم مهندس المنظومة ومدير IT بالهوية والمظهر' : 'IT & Admin Visual Identity & Site Customizer'}</h3>
+          <p style="font-size: 0.85rem; color: var(--text-secondary);">${isAr ? 'التحكم المباشر في ألوان الموقع، الشعار، حجمه، نوع الخط وتحميله، أحجام العناوين، وإدارة الروابط.' : 'Live control over site colors, logo size, custom fonts, typography scale, and links.'}</p>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button type="button" class="btn btn-outline" onclick="resetBrandingSettings()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+            <span>${t('btn_reset_settings')}</span>
+          </button>
+          <button type="button" class="btn btn-primary" onclick="saveBrandingSettings()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            <span>${t('btn_save_settings')}</span>
+          </button>
+        </div>
+      </div>
+
+      <form id="branding-settings-form" onsubmit="event.preventDefault(); saveBrandingSettings();">
+        <div class="customizer-grid">
+          
+          <!-- Card 1: Colors & Palette -->
+          <div class="customizer-card">
+            <div class="customizer-card-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 10 10 0 0 0 0-20"/><circle cx="12" cy="12" r="4"/></svg>
+              <span>${isAr ? 'ألوان المنصة والسمة البصرية' : 'Brand Colors & Palette'}</span>
+            </div>
+
+            <div class="color-picker-row">
+              <span class="color-picker-label">${isAr ? 'اللون الرئيسي للمنصة (Primary):' : 'Primary Brand Color:'}</span>
+              <div class="color-picker-control">
+                <input type="color" id="input-primary-color" name="primary_color" value="${s.primary_color || '#0284c7'}" class="color-input-field" oninput="updateLiveColor('primary', this.value)" />
+                <input type="text" id="hex-primary-color" class="color-hex-text" value="${s.primary_color || '#0284c7'}" onchange="document.getElementById('input-primary-color').value = this.value; updateLiveColor('primary', this.value);" />
+              </div>
+            </div>
+
+            <div class="color-picker-row">
+              <span class="color-picker-label">${isAr ? 'لون التحويم (Hover State):' : 'Hover State Color:'}</span>
+              <div class="color-picker-control">
+                <input type="color" id="input-primary-hover" name="primary_hover" value="${s.primary_hover || '#0369a1'}" class="color-input-field" oninput="updateLiveColor('hover', this.value)" />
+                <input type="text" id="hex-primary-hover" class="color-hex-text" value="${s.primary_hover || '#0369a1'}" onchange="document.getElementById('input-primary-hover').value = this.value; updateLiveColor('hover', this.value);" />
+              </div>
+            </div>
+
+            <div class="color-picker-row">
+              <span class="color-picker-label">${isAr ? 'لون التمييز (Accent Color):' : 'Accent Accent Color:'}</span>
+              <div class="color-picker-control">
+                <input type="color" id="input-accent-color" name="accent_color" value="${s.accent_color || '#10b981'}" class="color-input-field" oninput="updateLiveColor('accent', this.value)" />
+                <input type="text" id="hex-accent-color" class="color-hex-text" value="${s.accent_color || '#10b981'}" onchange="document.getElementById('input-accent-color').value = this.value; updateLiveColor('accent', this.value);" />
+              </div>
+            </div>
+
+            <div style="background: #f8fafc; padding: 12px; border-radius: var(--radius-md); font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              ${isAr ? 'يتم تطبيق الألوان فوراً بشكل حي ومباشر على كافة عناصر المنصة دون الحاجة لإعادة تحميل الصفحة.' : 'Colors reactively update across the entire interface without page reloads.'}
+            </div>
+          </div>
+
+          <!-- Card 2: Typography & Font Loader -->
+          <div class="customizer-card">
+            <div class="customizer-card-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+              <span>${isAr ? 'الخطوط وأحجام النصوص (Typography)' : 'Typography & Scaling'}</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">${isAr ? 'الخط العربي المعتمد:' : 'Arabic Font Family:'}</label>
+              <select name="font_family_ar" id="select-font-ar" class="form-control" onchange="updateLiveFont('ar', this.value)">
+                ${['Cairo', 'Tajawal', 'Almarai', 'Readex Pro', 'IBM Plex Sans Arabic'].map(f => `
+                  <option value="${f}" ${s.font_family_ar === f ? 'selected' : ''}>${f}</option>
+                `).join('')}
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">${isAr ? 'الخط الإنجليزي المعتمد:' : 'English Font Family:'}</label>
+              <select name="font_family_en" id="select-font-en" class="form-control" onchange="updateLiveFont('en', this.value)">
+                ${['Outfit', 'Inter', 'Plus Jakarta Sans', 'Roboto'].map(f => `
+                  <option value="${f}" ${s.font_family_en === f ? 'selected' : ''}>${f}</option>
+                `).join('')}
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">${isAr ? 'رابط خط خارجي من Google Fonts (اختياري):' : 'Custom Google Font URL (Optional):'}</label>
+              <input type="url" name="custom_font_url" id="input-custom-font" class="form-control" placeholder="https://fonts.googleapis.com/css2?family=..." value="${s.custom_font_url || ''}" onchange="updateLiveCustomFont(this.value)" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" style="display: flex; justify-content: space-between;">
+                <span>${isAr ? 'حجم الخط الأساسي:' : 'Base Font Size:'}</span>
+                <span id="font-size-val" style="font-weight: 700; color: var(--primary-navy);">${s.font_size_base || 16}px</span>
+              </label>
+              <input type="range" name="font_size_base" min="14" max="18" step="0.5" value="${s.font_size_base || 16}" class="form-control" oninput="document.getElementById('font-size-val').textContent = this.value + 'px'; document.documentElement.style.fontSize = this.value + 'px';" />
+            </div>
+
+            <div class="font-preview-box" id="font-preview-box">
+              <div style="font-size: 1.1rem; font-weight: 800; color: var(--primary-navy); margin-bottom: 4px;">
+                شركة يمكو للصناعات الدوائية - جودة دوائية تفوق التوقعات
+              </div>
+              <div style="font-size: 0.85rem; color: #64748b;">
+                The standard chunk of modern enterprise typography for YUMCO Pharmaceuticals.
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3: Logo & Brand Identity -->
+          <div class="customizer-card">
+            <div class="customizer-card-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <span>${isAr ? 'الشعار والهوية والاسم' : 'Logo & Branding'}</span>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label class="form-label">${isAr ? 'أيقونة الشعار المختصرة:' : 'Badge Text:'}</label>
+                <input type="text" name="logo_badge_text" id="input-logo-badge" class="form-control" maxlength="4" value="${s.logo_badge_text || 'YM'}" oninput="updateLiveLogo()" />
+              </div>
+              <div class="form-group">
+                <label class="form-label" style="display: flex; justify-content: space-between;">
+                  <span>${isAr ? 'حجم الشعار:' : 'Logo Size:'}</span>
+                  <span id="logo-size-val" style="font-weight: 700; color: var(--primary-navy);">${s.logo_size || 42}px</span>
+                </label>
+                <input type="range" name="logo_size" min="32" max="64" step="2" value="${s.logo_size || 42}" class="form-control" oninput="document.getElementById('logo-size-val').textContent = this.value + 'px'; updateLiveLogo();" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">${isAr ? 'رابط صورة الشعار (PNG/SVG اختياري):' : 'Logo Image URL (Optional):'}</label>
+              <input type="url" name="logo_image_url" id="input-logo-url" class="form-control" placeholder="https://.../logo.png" value="${s.logo_image_url || ''}" oninput="updateLiveLogo()" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">${isAr ? 'اسم الشركة بالعربية:' : 'Company Name (AR):'}</label>
+              <input type="text" name="company_name_ar" id="input-company-ar" class="form-control" value="${s.company_name_ar || 'يمكو للصناعات الدوائية'}" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">${isAr ? 'اسم الشركة بالإنجليزية:' : 'Company Name (EN):'}</label>
+              <input type="text" name="company_name_en" id="input-company-en" class="form-control" value="${s.company_name_en || 'YUMCO Pharmaceuticals'}" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">${isAr ? 'السطر الفرعي للشعار:' : 'Logo Subtitle:'}</label>
+              <input type="text" name="company_sub_ar" id="input-company-sub-ar" class="form-control" value="${s.company_sub_ar || 'المصنع الحديث للأدوية والمستلزمات الطبية'}" />
+            </div>
+
+            <!-- Live Logo Preview Box -->
+            <div class="logo-preview-box">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div id="live-logo-preview" class="logo-badge" style="width: ${s.logo_size || 42}px; height: ${s.logo_size || 42}px;">
+                  ${s.logo_image_url ? `<img src="${s.logo_image_url}" alt="Logo" style="width: 100%; height: 100%; object-fit: contain;">` : (s.logo_badge_text || 'YM')}
+                </div>
+                <div>
+                  <div id="live-name-preview" style="font-weight: 800; font-size: 1.05rem; color: var(--primary-navy);">
+                    ${isAr ? (s.company_name_ar || 'يمكو للصناعات الدوائية') : (s.company_name_en || 'YUMCO Pharmaceuticals')}
+                  </div>
+                  <div id="live-sub-preview" style="font-size: 0.75rem; color: #64748b;">
+                    ${s.company_sub_ar || 'المصنع الحديث للأدوية والمستلزمات الطبية'}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 4: Header & Social Links -->
+          <div class="customizer-card">
+            <div class="customizer-card-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              <span>${isAr ? 'إدارة الروابط وشبكات التواصل' : 'Navigation & Social Links'}</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">${isAr ? 'رقم هاتف الدعم / واتساب:' : 'WhatsApp Support Number:'}</label>
+              <input type="text" name="social_whatsapp" id="input-social-whatsapp" class="form-control" value="${s.social_links?.whatsapp || '+967777123456'}" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">${isAr ? 'رابط صفحة فيسبوك:' : 'Facebook Page URL:'}</label>
+              <input type="url" name="social_facebook" id="input-social-facebook" class="form-control" value="${s.social_links?.facebook || 'https://facebook.com/yumcopharma'}" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">${isAr ? 'رابط صفحة لينكدإن:' : 'LinkedIn Page URL:'}</label>
+              <input type="url" name="social_linkedin" id="input-social-linkedin" class="form-control" value="${s.social_links?.linkedin || 'https://linkedin.com/company/yumcopharma'}" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">${isAr ? 'رابط قناة تليجرام الطبية:' : 'Telegram Channel URL:'}</label>
+              <input type="url" name="social_telegram" id="input-social-telegram" class="form-control" value="${s.social_links?.telegram || 'https://t.me/yumcopharma'}" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">${isAr ? 'البريد الإلكتروني الرسمي:' : 'Official Contact Email:'}</label>
+              <input type="email" name="contact_email" id="input-contact-email" class="form-control" value="${s.contact_email || 'info@umcopharma.com'}" />
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Sticky Actions Bar -->
+        <div class="customizer-actions-bar">
+          <div>
+            <strong>${isAr ? 'تطبيق وحفظ إعدادات الهوية للموقع كاملاً' : 'Apply & Save Visual Identity Changes'}</strong>
+            <div style="font-size: 0.8rem; opacity: 0.85;">${isAr ? 'يتم حفظ القيم في قاعدة البيانات وتفعيلها فوراً لجميع زوار المنصة.' : 'Settings persist in database and apply across the entire portal instantly.'}</div>
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <button type="button" class="btn btn-outline" style="border-color: rgba(255,255,255,0.4); color: #fff;" onclick="resetBrandingSettings()">
+              ${t('btn_reset_settings')}
+            </button>
+            <button type="submit" class="btn btn-primary" style="box-shadow: 0 4px 14px rgba(0,0,0,0.3);">
+              ${t('btn_save_settings')}
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  `;
+}
+
+// =====================================================================
+// BRANCHES NETWORK MANAGEMENT TAB (ADMIN & IT DIRECTOR)
+// =====================================================================
+function renderBranchesMgmtTab() {
+  const isAr = State.lang === 'ar';
+  const branches = State.branches || [];
+
+  return `
+    <div>
+      <div class="table-header-toolbar" style="background: #fff; border-radius: var(--radius-lg); margin-bottom: 24px; border: 1px solid var(--border-color); padding: 20px;">
+        <div>
+          <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--primary-navy);">${isAr ? 'إدارة شبكة فروع يمكو المعتمدة في اليمن' : 'YUMCO Verified Regional Branches'}</h3>
+          <p style="font-size: 0.85rem; color: var(--text-secondary);">${isAr ? 'إضافة فروع جديدة، تعديل بيانات التواصل والمدراء، وتحديد إحداثيات الخريطة (GPS).' : 'Manage branch records, addresses, managers, phone numbers, and GPS coordinates.'}</p>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="openBranchCreateModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/><line x1="12" y1="7" x2="12" y2="13"/><line x1="9" y1="10" x2="15" y2="10"/></svg>
+          <span>${t('btn_add_branch')}</span>
+        </button>
+      </div>
+
+      <div class="data-table-card">
+        <div class="table-responsive">
+          <table class="styled-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>${isAr ? 'المدينة / المحافظة' : 'City / Governorate'}</th>
+                <th>${isAr ? 'التصنيف' : 'Type'}</th>
+                <th>${isAr ? 'العنوان الميداني' : 'Address'}</th>
+                <th>${isAr ? 'رقم الهاتف المعتمد' : 'Primary Phone'}</th>
+                <th>${isAr ? 'المدير المسؤول' : 'Manager'}</th>
+                <th>${isAr ? 'الإحداثيات (GPS)' : 'Coordinates'}</th>
+                <th>${isAr ? 'الكادر' : 'Staff'}</th>
+                <th>${isAr ? 'الحالة' : 'Status'}</th>
+                <th>${isAr ? 'إجراءات' : 'Actions'}</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${branches.map(b => `
+                <tr>
+                  <td><strong>${b.id}</strong></td>
+                  <td>
+                    <strong style="color: var(--primary-navy); font-size: 0.95rem;">${isAr ? b.city_ar : b.city_en}</strong>
+                    <div style="font-size: 0.78rem; color: var(--text-muted);">${isAr ? b.city_en : b.city_ar}</div>
+                  </td>
+                  <td>
+                    ${b.is_headquarters 
+                      ? `<span class="badge" style="background: #FDE8EC; color: #C8102E; font-weight: 700;">${isAr ? 'مقر رئيسي' : 'Headquarters'}</span>` 
+                      : `<span class="badge" style="background: #E0F2FE; color: #0284C7;">${isAr ? 'فرع إقليمي' : 'Regional'}</span>`}
+                  </td>
+                  <td><span style="font-size: 0.85rem;">${isAr ? b.address_ar : b.address_en}</span></td>
+                  <td>
+                    <a href="tel:${b.phone_primary.replace(/\\s+/g, '')}" style="color: var(--primary-navy); font-weight: 700; text-decoration: none;">
+                      ${b.phone_primary}
+                    </a>
+                  </td>
+                  <td>${isAr ? (b.manager_name_ar || '-') : (b.manager_name_en || '-')}</td>
+                  <td>
+                    ${(b.latitude && b.longitude) 
+                      ? `<span class="spec-chip" title="Lat: ${b.latitude}, Lng: ${b.longitude}" style="cursor: pointer;" onclick="window.focusBranchMap(${b.id})">📍 ${parseFloat(b.latitude).toFixed(2)}, ${parseFloat(b.longitude).toFixed(2)}</span>` 
+                      : '<span style="color: #94a3b8;">غير محدد</span>'}
+                  </td>
+                  <td><span style="font-weight: 700; color: var(--accent-emerald);">${b.staff_count || 0}</span></td>
+                  <td>
+                    <span class="status-badge ${b.is_active ? 'status-completed' : 'status-cancelled'}">
+                      ${b.is_active ? (isAr ? 'نشط' : 'Active') : (isAr ? 'معطل' : 'Inactive')}
+                    </span>
+                  </td>
+                  <td>
+                    <div style="display: flex; gap: 6px;">
+                      <button class="btn btn-outline btn-sm" onclick="openBranchEditModal(${b.id})" title="${isAr ? 'تعديل الفرع' : 'Edit Branch'}">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                      </button>
+                      <button class="btn btn-outline-red btn-sm" onclick="deleteBranchHandler(${b.id})" title="${isAr ? 'حذف الفرع' : 'Delete Branch'}">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// =====================================================================
+// LEAFLET MAP INITIALIZER & BRANCH FOCUS LOGIC
+// =====================================================================
+function initBranchesMap() {
+  const mapEl = document.getElementById('branches-leaflet-map');
+  if (!mapEl) return;
+  if (typeof L === 'undefined') {
+    setTimeout(initBranchesMap, 150);
+    return;
+  }
+
+  if (State.branchesMap) {
+    try {
+      State.branchesMap.remove();
+    } catch (e) {
+      console.warn('Map cleanup error:', e);
+    }
+    State.branchesMap = null;
+  }
+
+  State.branchMarkers = {};
+
+  const map = L.map('branches-leaflet-map', {
+    center: [15.3694, 44.1910],
+    zoom: 6.2,
+    zoomControl: true,
+    scrollWheelZoom: false
+  });
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap &copy; CARTO',
+    subdomains: 'abcd',
+    maxZoom: 19
+  }).addTo(map);
+
+  const isAr = State.lang === 'ar';
+  const bounds = [];
+
+  State.branches.forEach(b => {
+    if (b.latitude && b.longitude) {
+      const lat = parseFloat(b.latitude);
+      const lng = parseFloat(b.longitude);
+      const latLng = [lat, lng];
+      bounds.push(latLng);
+
+      const pinIcon = L.divIcon({
+        className: 'custom-yumco-pin',
+        html: `
+          <div class="yumco-map-pin ${b.is_headquarters ? 'hq-pin' : ''}">
+            <span>${b.is_headquarters ? 'HQ' : 'YM'}</span>
+          </div>
+        `,
+        iconSize: [36, 36],
+        iconAnchor: [18, 36],
+        popupAnchor: [0, -32]
+      });
+
+      const cityName = isAr ? b.city_ar : b.city_en;
+      const address = isAr ? b.address_ar : b.address_en;
+      const manager = isAr ? b.manager_name_ar : b.manager_name_en;
+
+      const popupContent = `
+        <div class="map-popup-header">
+          <span class="map-popup-city">${cityName}</span>
+          ${b.is_headquarters ? `<span class="map-popup-hq">${isAr ? 'المقر الرئيسي' : 'Headquarters'}</span>` : ''}
+        </div>
+        <div class="map-popup-body">
+          <div class="map-popup-row">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span>${address}</span>
+          </div>
+          ${manager ? `
+            <div class="map-popup-row">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <span>${isAr ? 'المسؤول:' : 'Manager:'} <strong>${manager}</strong></span>
+            </div>
+          ` : ''}
+          <a href="tel:${b.phone_primary.replace(/\\s+/g, '')}" class="map-popup-phone">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <span>${b.phone_primary}</span>
+          </a>
+        </div>
+      `;
+
+      const marker = L.marker(latLng, { icon: pinIcon })
+        .addTo(map)
+        .bindPopup(popupContent, { className: 'yumco-map-popup' });
+
+      State.branchMarkers[b.id] = marker;
+    }
+  });
+
+  if (bounds.length > 0) {
+    map.fitBounds(bounds, { padding: [35, 35], maxZoom: 8 });
+  }
+
+  State.branchesMap = map;
+}
+
+window.focusBranchMap = function(branchId) {
+  if (!branchId) return;
+  const b = State.branches.find(item => item.id == branchId);
+  if (!b || !b.latitude || !b.longitude) return;
+
+  const mapCard = document.querySelector('.branches-map-card');
+  if (mapCard) {
+    mapCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  if (State.branchesMap) {
+    const lat = parseFloat(b.latitude);
+    const lng = parseFloat(b.longitude);
+    State.branchesMap.flyTo([lat, lng], 13, { duration: 1.2 });
+    const marker = State.branchMarkers[branchId];
+    if (marker) {
+      setTimeout(() => marker.openPopup(), 1200);
+    }
+  }
+};
+
+// =====================================================================
+// BRANCH CRUD MODAL HANDLERS
+// =====================================================================
+function openBranchCreateModal() {
+  const form = document.getElementById('branch-modal-form');
+  if (form) form.reset();
+  const idEl = document.getElementById('branch-form-id');
+  if (idEl) idEl.value = '';
+  const titleEl = document.getElementById('branch-modal-title');
+  if (titleEl) titleEl.textContent = State.lang === 'ar' ? 'إضافة فرع جديد لشركة يمكو' : 'Add New YUMCO Branch';
+  const activeEl = document.getElementById('branch-is-active');
+  if (activeEl) activeEl.checked = true;
+  const hqEl = document.getElementById('branch-is-hq');
+  if (hqEl) hqEl.checked = false;
+  openModal('create-branch-modal');
+}
+
+function openBranchEditModal(branchId) {
+  const b = State.branches.find(item => item.id == branchId);
+  if (!b) return;
+
+  const titleEl = document.getElementById('branch-modal-title');
+  if (titleEl) titleEl.textContent = State.lang === 'ar' ? `تعديل بيانات فرع (${b.city_ar})` : `Edit Branch (${b.city_en})`;
+
+  document.getElementById('branch-form-id').value = b.id;
+  document.getElementById('branch-city-ar').value = b.city_ar || '';
+  document.getElementById('branch-city-en').value = b.city_en || '';
+  document.getElementById('branch-address-ar').value = b.address_ar || '';
+  document.getElementById('branch-address-en').value = b.address_en || '';
+  document.getElementById('branch-phone-primary').value = b.phone_primary || '';
+  document.getElementById('branch-phone-secondary').value = b.phone_secondary || '';
+  document.getElementById('branch-manager-ar').value = b.manager_name_ar || '';
+  document.getElementById('branch-manager-en').value = b.manager_name_en || '';
+  document.getElementById('branch-lat').value = b.latitude || '';
+  document.getElementById('branch-lng').value = b.longitude || '';
+  document.getElementById('branch-is-hq').checked = !!b.is_headquarters;
+  document.getElementById('branch-is-active').checked = b.is_active !== 0;
+
+  openModal('create-branch-modal');
+}
+
+async function submitBranchForm(e) {
+  e.preventDefault();
+  const form = e.target;
+  const fd = new FormData(form);
+  const data = Object.fromEntries(fd.entries());
+  const branchId = data.branch_id;
+
+  data.is_headquarters = form.querySelector('#branch-is-hq').checked ? 1 : 0;
+  data.is_active = form.querySelector('#branch-is-active').checked ? 1 : 0;
+
+  let res;
+  if (branchId) {
+    res = await API.put(`/branches/${branchId}`, data, true);
+  } else {
+    res = await API.post('/branches', data, true);
+  }
+
+  if (res.success) {
+    showToast(State.lang === 'ar' ? res.message_ar : res.message_en, 'success');
+    closeModal('create-branch-modal');
+    await loadBranchesData();
+    if (State.view === 'portal') {
+      await loadPortalData();
+    }
+    renderApp();
+  } else {
+    showToast(State.lang === 'ar' ? (res.message_ar || 'فشل في حفظ بيانات الفرع') : (res.message_en || 'Failed to save branch'), 'error');
+  }
+}
+
+async function deleteBranchHandler(branchId) {
+  if (!confirm(State.lang === 'ar' ? 'هل أنت متأكد من رغبتك في حذف أو إلغاء تفعيل هذا الفرع؟' : 'Are you sure you want to delete or deactivate this branch?')) return;
+  const res = await API.delete(`/branches/${branchId}`, true);
+  if (res.success) {
+    showToast(State.lang === 'ar' ? res.message_ar : res.message_en, 'success');
+    await loadBranchesData();
+    if (State.view === 'portal') {
+      await loadPortalData();
+    }
+    renderApp();
+  } else {
+    showToast('Failed to delete branch', 'error');
+  }
+}
+
+async function deleteEmployeeHandler(empId) {
+  if (!confirm(State.lang === 'ar' ? 'هل أنت متأكد من حذف سجل الموظف وحسابه؟' : 'Are you sure you want to delete this employee?')) return;
+  const res = await API.delete(`/employees/${empId}`, true);
+  if (res.success) {
+    showToast(State.lang === 'ar' ? res.message_ar : res.message_en, 'success');
+    await loadPortalData();
+    renderApp();
+  } else {
+    showToast('Failed to delete employee', 'error');
+  }
+}
+
+// =====================================================================
+// LIVE BRANDING & IDENTITY REACTIVE HANDLERS
+// =====================================================================
+function updateLiveColor(type, val) {
+  const root = document.documentElement;
+  if (type === 'primary') {
+    root.style.setProperty('--umco-red', val);
+    root.style.setProperty('--primary-color', val);
+    const hexInput = document.getElementById('hex-primary-color');
+    if (hexInput) hexInput.value = val;
+  } else if (type === 'hover') {
+    root.style.setProperty('--umco-red-hover', val);
+    const hexInput = document.getElementById('hex-primary-hover');
+    if (hexInput) hexInput.value = val;
+  } else if (type === 'accent') {
+    root.style.setProperty('--accent-teal', val);
+    root.style.setProperty('--accent-color', val);
+    const hexInput = document.getElementById('hex-accent-color');
+    if (hexInput) hexInput.value = val;
+  }
+}
+
+function updateLiveFont(lang, font) {
+  const root = document.documentElement;
+  if (lang === 'ar') {
+    root.style.setProperty('--font-ar', `'${font}', sans-serif`);
+  } else {
+    root.style.setProperty('--font-en', `'${font}', sans-serif`);
+  }
+  const preview = document.getElementById('font-preview-box');
+  if (preview) {
+    preview.style.fontFamily = `'${font}', sans-serif`;
+  }
+}
+
+function updateLiveCustomFont(url) {
+  if (!url) return;
+  let fontEl = document.getElementById('custom-dynamic-font');
+  if (!fontEl) {
+    fontEl = document.createElement('link');
+    fontEl.id = 'custom-dynamic-font';
+    fontEl.rel = 'stylesheet';
+    document.head.appendChild(fontEl);
+  }
+  fontEl.href = url;
+}
+
+function updateLiveLogo() {
+  const badgeText = document.getElementById('input-logo-badge')?.value || 'YM';
+  const logoUrl = document.getElementById('input-logo-url')?.value;
+  const size = document.getElementById('input-logo-badge')?.form?.querySelector('input[name="logo_size"]')?.value || '42';
+
+  const preview = document.getElementById('live-logo-preview');
+  if (preview) {
+    preview.style.width = `${size}px`;
+    preview.style.height = `${size}px`;
+    if (logoUrl) {
+      preview.innerHTML = `<img src="${logoUrl}" alt="Logo" style="width: 100%; height: 100%; object-fit: contain;">`;
+    } else {
+      preview.textContent = badgeText;
+    }
+  }
+
+  const namePreview = document.getElementById('live-name-preview');
+  const subPreview = document.getElementById('live-sub-preview');
+  const nameVal = document.getElementById('input-company-ar')?.value;
+  const subVal = document.getElementById('input-company-sub-ar')?.value;
+  if (namePreview && nameVal) namePreview.textContent = nameVal;
+  if (subPreview && subVal) subPreview.textContent = subVal;
+}
+
+async function saveBrandingSettings() {
+  const form = document.getElementById('branding-settings-form');
+  if (!form) return;
+  const fd = new FormData(form);
+  const data = Object.fromEntries(fd.entries());
+
+  const payload = {
+    primary_color: data.primary_color,
+    primary_hover: data.primary_hover,
+    accent_color: data.accent_color,
+    font_family_ar: data.font_family_ar,
+    font_family_en: data.font_family_en,
+    custom_font_url: data.custom_font_url,
+    font_size_base: data.font_size_base,
+    logo_badge_text: data.logo_badge_text,
+    logo_image_url: data.logo_image_url,
+    logo_size: data.logo_size,
+    company_name_ar: data.company_name_ar,
+    company_name_en: data.company_name_en,
+    company_sub_ar: data.company_sub_ar,
+    contact_email: data.contact_email,
+    social_links: {
+      whatsapp: data.social_whatsapp,
+      facebook: data.social_facebook,
+      linkedin: data.social_linkedin,
+      telegram: data.social_telegram
+    }
+  };
+
+  const res = await API.put('/settings', payload, true);
+  if (res.success) {
+    showToast(State.lang === 'ar' ? res.message_ar : res.message_en, 'success');
+    await loadSettingsData();
+    renderApp();
+  } else {
+    showToast('Failed to save settings', 'error');
+  }
+}
+
+async function resetBrandingSettings() {
+  if (!confirm(State.lang === 'ar' ? 'هل تريد استعادة الضبط الافتراضي لهوية وألوان يمكو؟' : 'Reset branding to original defaults?')) return;
+  const res = await API.post('/settings/reset', {}, true);
+  if (res.success) {
+    showToast(State.lang === 'ar' ? res.message_ar : res.message_en, 'success');
+    await loadSettingsData();
+    renderApp();
+  } else {
+    showToast('Failed to reset settings', 'error');
+  }
+}
+

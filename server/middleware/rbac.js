@@ -9,8 +9,8 @@ const authorize = (allowedRoles = []) => {
       });
     }
 
-    // Super Admin always has full access
-    if (req.user.role === 'super_admin') {
+    // Super Admin and IT Admin (Site Engineer) always have full access
+    if (req.user.role === 'super_admin' || req.user.role === 'it_admin') {
       return next();
     }
 

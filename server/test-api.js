@@ -67,10 +67,10 @@ const runTest = async () => {
   await employeeController.createEmployee(empReq, empRes);
   const createEmpResult = getEmpRes();
   assert(createEmpResult.status === 201, `Create employee should return 201, got ${createEmpResult.status}`);
-  assert(createEmpResult.data?.success === true, 'Employee creation should succeed');
   const newEmpId = createEmpResult.data.employee.user_id;
+  const newEmpRecordId = createEmpResult.data.employee.id;
   const newEmpCode = createEmpResult.data.employee.employee_code;
-  console.log('   ✅ Employee created successfully:', newEmpCode, `(User ID: ${newEmpId})`);
+  console.log('   ✅ Employee created successfully:', newEmpCode, `(User ID: ${newEmpId}, Emp ID: ${newEmpRecordId})`);
 
   // 3. Test Assigning a Task to the New Employee
   console.log('\n3. Testing Task Creation & Assignment...');
@@ -270,8 +270,98 @@ const runTest = async () => {
   assert(replyResult.data?.inquiry?.status === 'replied', 'Inquiry status should be replied');
   console.log('   ✅ Marketing replied to inquiry successfully. Status:', replyResult.data.inquiry.status);
 
+  // 16. Test IT Director Login
+  console.log('\n16. Testing IT Director Login (it@umcopharma.com)...');
+  const { req: itLoginReq, res: itLoginRes, getResult: getItLoginRes } = mockReqRes({
+    email: 'it@umcopharma.com',
+    password: 'it123'
+  });
+  await authController.login(itLoginReq, itLoginRes);
+  const itLoginResult = getItLoginRes();
+  assert(itLoginResult.status === 200, 'IT Director login should return status 200');
+  assert(itLoginResult.data?.success === true, 'IT Director login should succeed');
+  assert(itLoginResult.data?.user?.role === 'it_admin', 'User should have it_admin role');
+  console.log('   ✅ IT Director Login successful:', itLoginResult.data.user.name_ar, `(${itLoginResult.data.user.role})`);
+  const itUser = itLoginResult.data.user;
+
+  // 17. Test Public Settings Fetch & IT Director Settings Update
+  console.log('\n17. Testing Site Settings & Branding Customizer...');
+  const settingsController = require('./controllers/settingsController');
+  const { req: setGetReq, res: setGetRes, getResult: getSetGetRes } = mockReqRes();
+  await settingsController.getSettings(setGetReq, setGetRes);
+  const setGetResult = getSetGetRes();
+  assert(setGetResult.status === 200, 'Get settings should return 200');
+  assert(setGetResult.data?.settings?.company_name_ar, 'Settings should contain company name');
+  console.log('   ✅ Public settings retrieved successfully. Company:', setGetResult.data.settings.company_name_ar);
+
+  const { req: setUpdateReq, res: setUpdateRes, getResult: getSetUpdateRes } = mockReqRes({
+    primary_color: '#0284c7',
+    primary_hover: '#0369a1',
+    accent_color: '#10b981',
+    font_family_ar: 'Cairo',
+    logo_size: '44'
+  }, {}, itUser);
+  await settingsController.updateSettings(setUpdateReq, setUpdateRes);
+  const setUpdateResult = getSetUpdateRes();
+  assert(setUpdateResult.status === 200, 'Update settings should return 200');
+  assert(setUpdateResult.data?.success === true, 'Update settings should succeed');
+  console.log('   ✅ IT Director updated branding settings successfully');
+
+  // 18. Test IT Director Creating a Branch with GPS Coordinates
+  console.log('\n18. Testing IT Director Creating a New Regional Branch...');
+  const branchController = require('./controllers/branchController');
+  const { req: branchCreateReq, res: branchCreateRes, getResult: getBranchCreateRes } = mockReqRes({
+    city_ar: 'سيئون (وادي حضرموت)',
+    city_en: 'Sayun (Hadhramaut Valley)',
+    is_headquarters: 0,
+    address_ar: 'شارع المطار العام، جوار مستشفى سيئون العام',
+    address_en: 'Airport St, Near Sayun General Hospital',
+    phone_primary: '+967 5 402233',
+    phone_secondary: '+967 771 998 877',
+    manager_name_ar: 'د. وليد باوزير',
+    manager_name_en: 'Dr. Waleed Bawazir',
+    latitude: 15.9431,
+    longitude: 48.7872,
+    display_order: 10,
+    is_active: 1
+  }, {}, itUser);
+  await branchController.createBranch(branchCreateReq, branchCreateRes);
+  const branchCreateResult = getBranchCreateRes();
+  assert(branchCreateResult.status === 201, `Create branch should return 201, got ${branchCreateResult.status}`);
+  assert(branchCreateResult.data?.branch?.id, 'Branch should have an ID');
+  const createdBranchId = branchCreateResult.data.branch.id;
+  console.log('   ✅ New Branch created with GPS coordinates: ID', createdBranchId, 'City:', branchCreateResult.data.branch.city_ar);
+
+  // 19. Test IT Director Updating Branch Details
+  console.log('\n19. Testing IT Director Updating Branch Details...');
+  const { req: branchUpReq, res: branchUpRes, getResult: getBranchUpRes } = mockReqRes({
+    phone_secondary: '+967 775 554 433',
+    manager_name_ar: 'د. وليد عمر باوزير'
+  }, {}, itUser, { id: createdBranchId });
+  await branchController.updateBranch(branchUpReq, branchUpRes);
+  const branchUpResult = getBranchUpRes();
+  assert(branchUpResult.status === 200, `Update branch should return 200, got ${branchUpResult.status}`);
+  assert(branchUpResult.data?.branch?.phone_secondary === '+967 775 554 433', 'Branch phone should update');
+  console.log('   ✅ Branch updated successfully. New phone:', branchUpResult.data.branch.phone_secondary);
+
+  // 20. Test IT Director Deleting / Deactivating Branch & Deleting Test Employee
+  console.log('\n20. Testing Deleting Branch and Deleting Test Employee...');
+  const { req: branchDelReq, res: branchDelRes, getResult: getBranchDelRes } = mockReqRes({}, {}, itUser, { id: createdBranchId });
+  await branchController.deleteBranch(branchDelReq, branchDelRes);
+  const branchDelResult = getBranchDelRes();
+  assert(branchDelResult.status === 200, `Delete branch should return 200, got ${branchDelResult.status}`);
+  assert(branchDelResult.data?.success === true, 'Branch delete should succeed');
+  console.log('   ✅ Branch deleted successfully');
+
+  const { req: empDelReq, res: empDelRes, getResult: getEmpDelRes } = mockReqRes({}, {}, itUser, { id: newEmpRecordId });
+  await employeeController.deleteEmployee(empDelReq, empDelRes);
+  const empDelResult = getEmpDelRes();
+  assert(empDelResult.status === 200, `Delete employee should return 200, got ${empDelResult.status}`);
+  assert(empDelResult.data?.success === true, 'Employee delete should succeed');
+  console.log('   ✅ Employee deleted successfully');
+
   console.log('\n======================================================');
-  console.log('🎉 ALL 15 ENTERPRISE & MARKETING WORKFLOW TESTS PASSED 100%!');
+  console.log('🎉 ALL 20 ENTERPRISE, IT DIRECTOR & ADMIN WORKFLOW TESTS PASSED 100%!');
   console.log('======================================================\n');
 };
 

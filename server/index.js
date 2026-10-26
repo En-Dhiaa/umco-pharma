@@ -74,8 +74,9 @@ app.listen(PORT, () => {
   👥 HR & Operations:   http://localhost:${PORT}/#portal
 
   Demo Credentials:
-  - Marketing:    marketing@umcopharma.com | marketing123 (د. أسامة الحمادي)
+  - IT Director:  it@umcopharma.com        | it123     (م. ضياء الحميري - مدير IT والأنظمة)
   - Super Admin:  admin@umcopharma.com     | admin123  (د. عبدالله إسحاق)
+  - Marketing:    marketing@umcopharma.com | marketing123 (د. أسامة الحمادي)
   - HR Manager:   hr@umcopharma.com        | hr123     (أ. فاطمة الشامي)
   - Production:   tariq.saleh@umcopharma.com | emp123 (م. طارق صالح)
   - Quality QA:   samira.qahtan@umcopharma.com | emp123 (د. سميرة قحطان)

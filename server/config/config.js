@@ -8,6 +8,7 @@ module.exports = {
   dbPath: path.resolve(__dirname, '../../data/umco.db'),
   roles: {
     SUPER_ADMIN: 'super_admin',
+    IT_ADMIN: 'it_admin',
     HR_MANAGER: 'hr_manager',
     BRANCH_MANAGER: 'branch_manager',
     EMPLOYEE: 'employee',
